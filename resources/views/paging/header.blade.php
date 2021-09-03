@@ -29,16 +29,18 @@
                                         <i class="fas fa-bell cakicon-navbar" style="font-size: 28px"></i>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item" href="#"><span>Edit Profile</span></a>
+                                        <a class="dropdown-item" href="/user/{{Auth::user()->id}}/edit"><span>Edit Profile</span></a>
                                         <a class="dropdown-item" href="#"><span>Log Out</span></a>
                                     </div>
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <img src="{{ asset ("/foto") }}/{{Auth::user()->foto}}" width="40" height="40" class="rounded-circle cakicon-navbar">
+                                        
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item" href="#"><span>Edit Profile</span></a>
+                                        <label class="dropdown-item" style="border-bottom: 0.5px solid #dadada;"><strong>Hi, {{Auth::user()->name}} !</strong></label>
+                                        <a class="dropdown-item" href="/user/{{Auth::user()->id}}/edit"><span>Edit Profile</span></a>
                                         <a class="dropdown-item" href="/logout"><span>Log Out</span></a>
                                     </div>
                                 </li>
