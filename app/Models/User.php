@@ -12,7 +12,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
     protected $table = 'users';
-    protected $fillable = ['name', 'email', 'password', 'photo_profile', 'role', 'role_label', 'user_creator_id', 'user_updater_id', 'updated_at'];
+    protected $fillable = ['name', 'company_id', 'email', 'password', 'photo_profile', 'role', 'role_label', 'user_creator_id', 'user_updater_id', 'updated_at'];
 
     function getUserMenu(){
         return $this->hasMany('App\Models\User_menu')->orderBy('mp_sequence', 'ASC')->orderBy('m_sequence', 'ASC');

@@ -57,6 +57,17 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/updateassignmenuuser/{user}', 'App\Http\Controllers\UserController@updateassignmenu');
         Route::get('/chartusertotal', 'App\Http\Controllers\UserController@chartusertotal');
         Route::post('/getchartusertotal', 'App\Http\Controllers\UserController@getchartusertotal');
+
+        Route::get('/company', 'App\Http\Controllers\CompanyController@index')->name('company');
+        Route::post('/getlistcompany', 'App\Http\Controllers\CompanyController@get_list');
+        Route::get('/company/{company}', 'App\Http\Controllers\CompanyController@show');
+        Route::get('/createcompany', 'App\Http\Controllers\CompanyController@create');
+        Route::post('/storecompany', 'App\Http\Controllers\CompanyController@store');
+        Route::get('/company/{company}/edit', 'App\Http\Controllers\CompanyController@edit');
+        Route::post('/getdatacompany', 'App\Http\Controllers\CompanyController@getdata');
+        Route::post('/updatecompany/{company}', 'App\Http\Controllers\CompanyController@update');
+        Route::post('/deletecompany', 'App\Http\Controllers\CompanyController@destroy');
+        Route::post('/getlinkscompany', 'App\Http\Controllers\CompanyController@getlinks');
     });
 });
 

@@ -100,6 +100,7 @@ class UserController extends Controller
         if($request->validate($rules, $messages)){
             $id = User::create([
                 "name"=> $request->name,
+                "company_id" => Auth::user()->company_id,
                 "email"=> $request->email,
                 "password"=> Hash::make($request->password),
                 "photo_profile"=> $request->photo_profile,

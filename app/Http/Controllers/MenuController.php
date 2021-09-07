@@ -298,7 +298,7 @@ class MenuController extends Controller
                         'is_shown_at_side_menu'=> $ct1_req["ct1_is_shown_at_side_menu"] == 1 ? 'on': ($ct1_req["ct1_is_shown_at_side_menu"] == 'on'? 'on':null),
                         'parent_id' => $id,
                         'user_creator_id' => Auth::user()->id
-                    ]);
+                    ])->id;
                     array_push($new_menu_field_ids, $idct);
                 }
             }
