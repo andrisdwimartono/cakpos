@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\User_menu;
+use App\Models\User_role_menu;
 use App\Models\Menu;
 use Hash;
 
@@ -20,9 +21,10 @@ class UserController extends Controller
                 "name" => "text",
                 "email" => "text",
                 "password" => "text",
-                "foto" => "upload"
+                "photo_profile" => "upload"
             ],
             "fieldschildtable" => [
+                
             ]
         ];
 
@@ -39,6 +41,16 @@ class UserController extends Controller
             "in" => "Tidak ada dalam pilihan :attribute!!",
             "exists" => "Tidak ada dalam :attribute!!",
             "date_format" => "Format tidak sesuai di :attribute!!"
+        ];
+
+        $td["fieldsoptions"] = [
+            "role" => [
+                ["name" => "admin", "label" => "Administrator"],
+                ["name" => "manager", "label" => "Manager"],
+                ["name" => "selling", "label" => "Selling Staf"],
+                ["name" => "purchasing", "label" => "Purchasing Staf"],
+                ["name" => "sellingandpurchasing", "label" => "Selling and Purhcasing Staf"]
+            ]
         ];
 
         return $td;
@@ -90,7 +102,7 @@ class UserController extends Controller
                 "name"=> $request->name,
                 "email"=> $request->email,
                 "password"=> Hash::make($request->password),
-                "foto"=> $request->foto,
+                "photo_profile"=> $request->photo_profile,
                 "user_creator_id"=> Auth::user()->id
             ])->id;
 
@@ -153,7 +165,7 @@ class UserController extends Controller
                 "name"=> $request->name,
                 "email"=> $request->email,
                 "password"=> Hash::make($request->password),
-                "foto"=> $request->foto,
+                "photo_profile"=> $request->photo_profile,
                 "user_updater_id"=> Auth::user()->id
             ]);
 
@@ -339,7 +351,8 @@ class UserController extends Controller
     public function getdataassignmenuuser(Request $request)
     {
        if($request->ajax()){
-            $user = User_menu::whereUserId($request->id)->get();
+            $user_menus = User_menu::whereUserId($request->id)->get();
+            $user = User::whereId($request->id)->first();
             if(!$user){
                 abort(404, "Data not found");
             }
@@ -348,7 +361,28 @@ class UserController extends Controller
                 "status" => 201,
                 "message" => "Data available",
                 "data" => [
+                    "user_menus" => $user_menus,
                     "user" => $user
+                ]
+            );
+
+            return response()->json($results);
+        }
+    }
+
+    public function getdataassignmenuuserrole(Request $request)
+    {
+       if($request->ajax()){
+            $user_menus = User_role_menu::whereRole($request->role)->get();
+            if(!$user_menus){
+                abort(404, "Data not found");
+            }
+
+            $results = array(
+                "status" => 201,
+                "message" => "Data available",
+                "data" => [
+                    "user_menus" => $user_menus
                 ]
             );
 
@@ -359,6 +393,11 @@ class UserController extends Controller
     public function updateassignmenu(Request $request, $id)
     {
         $page_data = $this->tabledesign();
+        
+        User::whereId($id)->update([
+            "role" => $request["role"],
+            "role_label" => $request["role_label"]
+        ]);
         
         foreach(Menu::whereNull("is_group_menu")->get() as $menu){
             if(User_menu::where("user_id", $id)->where("menu_id", $menu->id)->first()){
@@ -456,5 +495,73 @@ class UserController extends Controller
             'data' => ['id' => $id]
         ]);
         
+    }
+
+    public function chartusertotal(){
+        $page_data = $this->tabledesign();
+        $page_data["page_method_name"] = "Chart User Total";
+        $page_data["footer_js_page_specific_script"] = ["user.page_specific_script.footer_js_chart"];
+        $page_data["header_js_page_specific_script"] = ["paging.page_specific_script.header_js_chart"];
+        
+        return view("user.chartusertotal", ["page_data" => $page_data]);
+    }
+
+    public function getchartusertotal(Request $request){
+        if($request->ajax()){
+            if($request->start_date && $request->finish_date){
+                $start_date = $request->start_date?\Carbon\Carbon::createFromFormat('d/m/Y', $request->start_date)->format('Y-m-d'):null;
+                $finish_date = $request->finish_date?\Carbon\Carbon::createFromFormat('d/m/Y', $request->finish_date)->format('Y-m-d'):null;
+                $user = User::select(DB::raw("created_at"), DB::raw("count(*) as total"))->whereBetween("created_at", [$start_date, $finish_date])->groupBy("created_at")->get();
+            }else{
+                $user = User::get();
+            }
+            
+            if(!$user){
+                abort(404, "Data not found");
+            }
+
+            $results = array(
+                "status" => 201,
+                "message" => "Data available",
+                "data" => [
+                    "user" => $user
+                ]
+            );
+
+            return response()->json($results);
+        }
+    }
+
+    public function editprofile()
+    {
+        $page_data = $this->tabledesign();
+        $page_data["page_method_name"] = "Update";
+        $page_data["footer_js_page_specific_script"] = ["user.page_specific_script.footer_js_editprofile"];
+        $page_data["header_js_page_specific_script"] = ["paging.page_specific_script.header_js_create"];
+        
+        $page_data["id"] = Auth::user()->id;
+        return view("user.create", ["page_data" => $page_data]);
+    }
+
+    public function updateprofile(Request $request)
+    {
+        $page_data = $this->tabledesign();
+        $rules = $page_data["fieldsrules"];
+        $messages = $page_data["fieldsmessages"];
+        if($request->validate($rules, $messages)){
+            User::where("id", Auth::user()->id)->update([
+                "name"=> $request->name,
+                "email"=> $request->email,
+                "password"=> Hash::make($request->password),
+                "photo_profile"=> $request->photo_profile,
+                "user_updater_id"=> Auth::user()->id
+            ]);
+
+            return response()->json([
+                'status' => 201,
+                'message' => 'Profile is updated',
+                'data' => ['id' => Auth::user()->id]
+            ]);
+        }
     }
 }

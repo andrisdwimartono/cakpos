@@ -23,6 +23,8 @@ Route::post('register', [AuthController::class, 'register']);
 Route::group(['middleware' => 'auth'], function () {
     Route::get('home', [HomeController::class, 'index'])->name('home');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/user/editprofile', 'App\Http\Controllers\UserController@editprofile');
+    Route::post('/updateprofile', 'App\Http\Controllers\UserController@updateprofile');
     Route::middleware(['checkauth'])->group(function () {
         //Route::get('admin', [AdminController::class, 'index']);
         Route::get('/menu', 'App\Http\Controllers\MenuController@index')->name('menu');
@@ -44,13 +46,17 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/storeuser', 'App\Http\Controllers\UserController@store');
         Route::get('/user/{user}/edit', 'App\Http\Controllers\UserController@edit');
         Route::post('/getdatauser', 'App\Http\Controllers\UserController@getdata');
+        Route::post('/getoptionsuser', 'App\Http\Controllers\UserController@getoptions');
         Route::post('/updateuser/{user}', 'App\Http\Controllers\UserController@update');
         Route::post('/deleteuser', 'App\Http\Controllers\UserController@destroy');
         Route::post('/uploadfileuser', 'App\Http\Controllers\UserController@storeUploadFile');
         Route::get('/assignmenu/{user}/edit', 'App\Http\Controllers\UserController@assignmenu');
         Route::post('/assignmenu/{user}', 'App\Http\Controllers\UserController@update_assignmenu');
         Route::post('/getdataassignmenuuser', 'App\Http\Controllers\UserController@getdataassignmenuuser');
+        Route::post('/getdataassignmenuuserrole', 'App\Http\Controllers\UserController@getdataassignmenuuserrole');
         Route::post('/updateassignmenuuser/{user}', 'App\Http\Controllers\UserController@updateassignmenu');
+        Route::get('/chartusertotal', 'App\Http\Controllers\UserController@chartusertotal');
+        Route::post('/getchartusertotal', 'App\Http\Controllers\UserController@getchartusertotal');
     });
 });
 

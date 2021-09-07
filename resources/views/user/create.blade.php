@@ -26,14 +26,14 @@
                                 <label class="col-sm-4 col-form-label"></label>
                                 <div class="input-group col-sm-6">
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="upload_foto" name="upload_foto" onchange="selectingfile('foto');">
-                                        <label class="custom-file-label" for="upload_foto">Pilih file Foto</label>
+                                        <input type="file" class="custom-file-input" id="upload_photo_profile" name="upload_photo_profile" onchange="selectingfile('photo_profile');">
+                                        <label class="custom-file-label" for="upload_photo_profile">Pilih file Foto</label>
                                     </div>
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button" id="btn_foto" disabled>Upload</button>
+                                        <button class="btn btn-outline-secondary" type="button" id="btn_photo_profile" disabled>Upload</button>
                                     </div>
                                 </div>
-                                <input type="hidden" class="custom-file-input" id="foto" name="foto">    
+                                <input type="hidden" class="custom-file-input" id="photo_profile" name="photo_profile">    
                             </div>
                     </div>
                     @if($page_data["page_method_name"] != "View")

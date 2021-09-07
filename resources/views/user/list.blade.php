@@ -2,8 +2,14 @@
 
     @section('content')
     @csrf
-        <div class="col-md-3">
-            <a href="/create{{$page_data["page_data_urlname"]}}" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Add Data"><i class="fas fa-plus text-white"></i></a>
+        <div class="col-md-10 row">
+            <div class="col-md-7">
+                <a href="/create{{$page_data["page_data_urlname"]}}" class="btn btn-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Add Data"><i class="fas fa-plus text-white"></i></a> 
+            </div>
+            <div class="col-md-2 text-center">
+                <a href="/chart{{$page_data["page_data_urlname"]}}total" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ucwords($page_data["page_data_urlname"])}} Total"><i class="fas fa-chart-area text-white"></i></a>
+                <label><strong>User Total</strong></label>
+            </div>
         </div>
         <table id="example1" class="table table-bordered table-striped">
         <thead>

@@ -35,12 +35,12 @@
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <img src="{{ asset ("/foto") }}/{{Auth::user()->foto}}" width="40" height="40" class="rounded-circle cakicon-navbar">
+                                        <img src="{{ asset ("/photo_profile") }}/{{Auth::user()->photo_profile}}" width="40" height="40" class="rounded-circle cakicon-navbar">
                                         
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                                         <label class="dropdown-item" style="border-bottom: 0.5px solid #dadada;"><strong>Hi, {{Auth::user()->name}} !</strong></label>
-                                        <a class="dropdown-item" href="/user/{{Auth::user()->id}}/edit"><span>Edit Profile</span></a>
+                                        <a class="dropdown-item" href="/user/editprofile"><span>Edit Profile</span></a>
                                         <a class="dropdown-item" href="/logout"><span>Log Out</span></a>
                                     </div>
                                 </li>

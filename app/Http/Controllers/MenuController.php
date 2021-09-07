@@ -261,6 +261,7 @@ class MenuController extends Controller
                 'user_updater_id' => Auth::user()->id
             ]);
 
+            $new_menu_field_ids = array();
             foreach($ctreq1_menu as $ct1_req){
                 if(isset($ct1_req["id"])){
                     Menu::where("id", $ct1_req["id"])->update([
@@ -287,7 +288,7 @@ class MenuController extends Controller
                         'user_updater_id' => Auth::user()->id
                     ]);
                 }else{
-                    Menu::create([
+                    $idct = Menu::create([
                         'mp_sequence'=> $request->mp_sequence,
                         'm_sequence'=> $ct1_req["ct1_m_sequence"],
                         'menu_name'=> $ct1_req["ct1_menu_name"],
@@ -298,6 +299,19 @@ class MenuController extends Controller
                         'parent_id' => $id,
                         'user_creator_id' => Auth::user()->id
                     ]);
+                    array_push($new_menu_field_ids, $idct);
+                }
+            }
+
+            foreach(Menu::whereParentId($id)->get() as $ch){
+                $is_still_exist = false;
+                foreach($ctreq1_menu as $ct_request){
+                    if($ch->id == $ct_request["id"] || in_array($ch->id, $new_menu_field_ids)){
+                        $is_still_exist = true;
+                    }
+                }
+                if(!$is_still_exist){
+                    Menu::whereId($ch->id)->delete();
                 }
             }
             

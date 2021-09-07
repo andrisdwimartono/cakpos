@@ -67,11 +67,37 @@
             }
         });
 
-        //Initialize Select2 Elements
-        $('.select2bs4').select2({
+        $('select').select2({
             theme: 'bootstrap4' @if($page_data["page_method_name"] == "View"),
             disabled: true @endif
-        })
+        });
+
+        $.ajax({
+            url: "/getoptions{{$page_data["page_data_urlname"]}}",
+            type: "post",
+            data: {
+                fieldname: "role",
+                _token: $("#quickForm input[name=_token]").val()
+            },
+            success: function(data){
+                var newState = new Option("", "", true, false);
+                $("#role").append(newState).trigger("change");
+                for(var i = 0; i < data.length; i++){
+                    newState = new Option(data[i].label, data[i].name, true, false);
+                    $("#role").append(newState).trigger("change");
+                }
+            },
+            error: function (err) {
+                if (err.status == 422) {
+                    $.each(err.responseJSON.errors, function (i, error) {
+                        var validator = $("#quickForm").validate();
+                        var errors = {}
+                        errors[i] = error[0];
+                        validator.showErrors(errors);
+                    });
+                }
+            }
+        });
         
         $('#quickForm').validate({
             rules: {
@@ -126,11 +152,59 @@
                 _token: $('#quickForm input[name=_token]').val()
             },
             success: function(data){
-                for(var i = 0; i < data.data.{{$page_data["page_data_urlname"]}}.length; i++){
-                    if(data.data.{{$page_data["page_data_urlname"]}}[i].is_granted == 'on')
-                        $('#menu_'+data.data.{{$page_data["page_data_urlname"]}}[i].menu_id).attr('checked', 'checked');
+                for(var i = 0; i < data.data.user_menus.length; i++){
+                    if(data.data.user_menus[i].is_granted == 'on')
+                        $('#menu_'+data.data.user_menus[i].menu_id).prop('checked', true);
                 }
+                $("select[name=role]").val(data.data.user.role).change();
                 cto_loading_hide();
+                $("#role").on("change", function() {
+                    $("#role_label").val($('#role option:selected').text());
+                    $.ajax({
+                        url: "/getdataassignmenu{{$page_data["page_data_urlname"]}}role",
+                        type: "post",
+                        data: {
+                            role: $('#quickForm select[name=role]').val(),
+                            _token: $('#quickForm input[name=_token]').val()
+                        },
+                        success: function(data){
+                            if(data.data.user_menus.length == 0){
+                                $.toast({
+                                    text: "Tidak ada data",
+                                    heading: 'Status',
+                                    icon: 'warning',
+                                    showHideTransition: 'fade',
+                                    allowToastClose: true,
+                                    hideAfter: 3000,
+                                    position: 'mid-center',
+                                    textAlign: 'left'
+                                });
+                            }
+                            for(var i = 0; i < data.data.user_menus.length; i++){
+                                if(data.data.user_menus[i].is_granted == 'on')
+                                    $('#menu_'+data.data.user_menus[i].menu_id).prop('checked', true);
+                                else
+                                    $('#menu_'+data.data.user_menus[i].menu_id).prop('checked', false);
+                            }
+                            cto_loading_hide();
+                        },
+                        error: function (err) {
+                            if (err.status >= 400 && err.status <= 500) {
+                                $.toast({
+                                    text: err.status+"\n"+err.responseJSON.message,
+                                    heading: 'Status',
+                                    icon: 'warning',
+                                    showHideTransition: 'fade',
+                                    allowToastClose: true,
+                                    hideAfter: 3000,
+                                    position: 'mid-center',
+                                    textAlign: 'left'
+                                });
+                            }
+                            cto_loading_hide();
+                        }
+                    });
+                });
             },
             error: function (err) {
                 if (err.status >= 400 && err.status <= 500) {

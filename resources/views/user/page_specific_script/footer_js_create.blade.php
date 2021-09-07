@@ -67,13 +67,6 @@ $(function () {
     }
 });
 
-$(".select2bs4").select2({
-    placeholder: "",
-    allowClear: true,
-    theme: "bootstrap4" @if($page_data["page_method_name"] == "View"),
-    disabled: true @endif
-});
-
 var fields = $("#quickForm").serialize();
 
 $("#quickForm").validate({
@@ -147,7 +140,7 @@ function getdata(){
                     $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").prop("checked", data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
                 }else{
                     $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
-                        if(["foto"].includes(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i])){
+                        if(["photo_profile"].includes(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i])){
                             if(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i] != ""){
                                 $("#btn_"+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"").removeAttr("disabled");
                                 $("#btn_"+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"").addClass("btn-success text-white");
@@ -192,15 +185,15 @@ function selectingfile(fieldid){
     $("#"+fieldid).val("");
 }
 
-$("#btn_foto").on('click', function(){
-    if($("#foto").val() != ""){
-        fetch('{{ asset ("/foto/") }}/'+$("#foto").val()).then(resp => resp.blob())
+$("#btn_photo_profile").on('click', function(){
+    if($("#photo_profile").val() != ""){
+        fetch('{{ asset ("/photo_profile/") }}/'+$("#photo_profile").val()).then(resp => resp.blob())
         .then(blob => {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.style.display = 'none';
             a.href = url;
-            a.download = $("#foto").val();
+            a.download = $("#photo_profile").val();
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
@@ -218,10 +211,10 @@ $("#btn_foto").on('click', function(){
             });
         });
     }else{
-        $("#btn_foto").attr("disabled", true);
-        $("#btn_foto").removeClass("btn-primary text-white");
+        $("#btn_photo_profile").attr("disabled", true);
+        $("#btn_photo_profile").removeClass("btn-primary text-white");
         
-        var uploadfile = document.getElementById("upload_foto").files[0];
+        var uploadfile = document.getElementById("upload_photo_profile").files[0];
         var name = uploadfile.name;
         var form_data = new FormData();
         var ext = name.split('.').pop().toLowerCase();
@@ -256,7 +249,7 @@ $("#btn_foto").on('click', function(){
         }else{
             form_data.append("file", uploadfile);
             form_data.append("_token", $("#quickForm input[name=_token]").val());
-            form_data.append("menname", "foto");
+            form_data.append("menname", "photo_profile");
             $.ajax({
                 url:"/uploadfileuser",
                 method:"POST",
@@ -265,15 +258,15 @@ $("#btn_foto").on('click', function(){
                 cache: false,
                 processData: false,
                 beforeSend:function(){
-                    $("label[for=upload_foto]").html("Uploading <i class=\"fas fa-spinner fa-pulse\"></i>");
+                    $("label[for=upload_photo_profile]").html("Uploading <i class=\"fas fa-spinner fa-pulse\"></i>");
                 },
                 success:function(data){
                     if(data.status >= 200 && data.status <= 299){
-                        $("label[for=upload_foto]").html("Finished upload file");
-                        $("#foto").val(data.filename);
-                        $("#btn_foto").attr("disabled", false);
-                        $("#btn_foto").addClass("btn-success text-white");
-                        $("#btn_foto").html("Download");
+                        $("label[for=upload_photo_profile]").html("Finished upload file");
+                        $("#photo_profile").val(data.filename);
+                        $("#btn_photo_profile").attr("disabled", false);
+                        $("#btn_photo_profile").addClass("btn-success text-white");
+                        $("#btn_photo_profile").html("Download");
                     }
                 },
                 error: function (err) {

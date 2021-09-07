@@ -1,13 +1,23 @@
     @extends('paging.main')
 
     @section('content')
-    <div class="container-fluid">
         <div class="row">
           <!-- left column -->
           <div class="col-md-12">
             <div class="card card-primary card-tabs">
               <div id="cto_overlay" class="overlay">
                 <div id="cto_mengecek"><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i></div>
+              </div>
+              <form id="quickForm" action="#">
+              @csrf
+              <div class="form-group row">
+                <label class="col-sm-1 ml-2 col-form-label" for="role">Role</label>
+                <div class="col-sm-6">
+                  <select name="role" id="role" class="form-control select2-container" style="width: 100%;" @if($page_data["page_method_name"] == "View") readonly @endif>
+
+                  </select>
+                </div>
+                <input type="hidden" name="role_label" id="role_label">
               </div>
               <div class="card-header p-0 pt-1">
                 <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
@@ -26,9 +36,7 @@
                 </ul>
               </div>
               <div class="card-body">
-              <form id="quickForm" action="#">
                 <div class="tab-content" id="custom-tabs-one-tabContent">
-                  @csrf
                   @php $index = 0 @endphp
                   @foreach ($menus as $menu)
                     @if ($menu->is_group_menu == 1 || $menu->is_group_menu == "on")
@@ -80,6 +88,5 @@
           <!--/.col (right) -->
         </div>
         <!-- /.row -->
-      </div>
       <!-- /.container-fluid -->
       @endsection

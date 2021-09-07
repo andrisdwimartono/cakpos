@@ -19,7 +19,7 @@
                     </a>
                     <ul class="collapse list-unstyled{{$parent_active_id == $um->menu_id ? ' show' : '' }}" id="submenu{{$um->mp_sequence}}">
                 @elseif (!isset($um->is_group_menu) && !isset($um->parent_id))
-                  @if ($um->is_shown_at_side_menu == 'on')
+                  @if ($um->is_shown_at_side_menu == 'on' && $um->is_granted == 'on')
                       <li{{ Request::is($um->url) ? ' class=active' : '' }}>
                         <a href="{{url($um->url)}}" class="caksidemenu">
                           <i class="nav-icon fas {{$um->menu_icon}}"></i>
@@ -28,7 +28,7 @@
                       </li>
                   @endif
                 @else
-                  @if ($um->is_shown_at_side_menu == 'on')
+                  @if ($um->is_shown_at_side_menu == 'on' && $um->is_granted == 'on')
                       <li{{ Request::is($um->url) ? ' class=active' : '' }}>
                           <a href="{{url($um->url)}}" class="caksidemenu caksidechildmenu">
                             <i class="fas {{$um->menu_icon}}"></i>

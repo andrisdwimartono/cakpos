@@ -10,6 +10,7 @@
         <script src="{{ asset ("/assets/datatables/js/dataTables.rowReorder.min.js") }}"></script>
         <script src="{{ asset ("/assets/datatables/js/dataTables.buttons.min.js") }}"></script>
         <script src="{{ asset ("/assets/cto/js/cakrudtemplate.js") }}"></script>
+        <script src="{{ asset ("/assets/cto/js/cto_loadinganimation.min.js") }}"></script>
         <script src="{{ asset ("/assets/cto/js/dateformatvalidation.min.js") }}"></script>
 
         <script type="text/javascript">
