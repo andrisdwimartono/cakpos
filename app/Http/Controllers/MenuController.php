@@ -91,7 +91,7 @@ class MenuController extends Controller
         
         $rules = [
             'mp_sequence' => 'required|integer|min:1',
-            'menu_name' => 'required|min:4',
+            'menu_name' => 'required|min:3',
             'url' => 'required|min:1'
         ];
 
@@ -104,8 +104,8 @@ class MenuController extends Controller
         ];
 
         $ctrule1_menu = [
-            'ct1_menu_name' => 'required|min:4',
-            'ct1_url' => 'required|min:4'
+            'ct1_menu_name' => 'required|min:3',
+            'ct1_url' => 'required|min:3'
         ];
 
         $ctreq1_menu = json_decode($request->ct1_menu, true);
@@ -205,7 +205,7 @@ class MenuController extends Controller
         
         $rules = [
             'mp_sequence' => 'required|integer|min:1',
-            'menu_name' => 'required|min:4',
+            'menu_name' => 'required|min:3',
             'url' => 'required|min:1'
         ];
 
@@ -218,8 +218,8 @@ class MenuController extends Controller
         ];
 
         $ctrule1_menu = [
-            'ct1_menu_name' => 'required|min:4',
-            'ct1_url' => 'required|min:4'
+            'ct1_menu_name' => 'required|min:3',
+            'ct1_url' => 'required|min:3'
         ];
 
         $ctreq1_menu = json_decode($request->ct1_menu, true);
