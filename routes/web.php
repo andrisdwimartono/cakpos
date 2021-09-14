@@ -101,6 +101,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/getoptionsproduct', 'App\Http\Controllers\ProductController@getoptions');
         Route::post('/getlinksproduct', 'App\Http\Controllers\ProductController@getlinks');
         Route::post('/uploadfileproduct', 'App\Http\Controllers\ProductController@storeUploadFile');
+        Route::post('/getavailablestock', 'App\Http\Controllers\ProductController@getAvailableStock');
 
         Route::get('/warehouse', 'App\Http\Controllers\WarehouseController@index')->name('warehouse');
         Route::post('/getlistwarehouse', 'App\Http\Controllers\WarehouseController@get_list');
@@ -143,6 +144,41 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/deletecustomer', 'App\Http\Controllers\CustomerController@destroy');
         Route::post('/getlinkscustomer', 'App\Http\Controllers\CustomerController@getlinks');
         Route::post('/uploadfilecustomer', 'App\Http\Controllers\CustomerController@storeUploadFile');
+
+        Route::get('/supplier', 'App\Http\Controllers\SupplierController@index')->name('supplier');
+        Route::post('/getlistsupplier', 'App\Http\Controllers\SupplierController@get_list');
+        Route::get('/supplier/{supplier}', 'App\Http\Controllers\SupplierController@show');
+        Route::get('/createsupplier', 'App\Http\Controllers\SupplierController@create');
+        Route::post('/storesupplier', 'App\Http\Controllers\SupplierController@store');
+        Route::get('/supplier/{supplier}/edit', 'App\Http\Controllers\SupplierController@edit');
+        Route::post('/getdatasupplier', 'App\Http\Controllers\SupplierController@getdata');
+        Route::post('/updatesupplier/{supplier}', 'App\Http\Controllers\SupplierController@update');
+        Route::post('/deletesupplier', 'App\Http\Controllers\SupplierController@destroy');
+        Route::post('/uploadfilesupplier', 'App\Http\Controllers\SupplierController@storeUploadFile');
+
+        Route::get('/bundle', 'App\Http\Controllers\BundleController@index')->name('bundle');
+        Route::post('/getlistbundle', 'App\Http\Controllers\BundleController@get_list');
+        Route::get('/bundle/{bundle}', 'App\Http\Controllers\BundleController@show');
+        Route::get('/createbundle', 'App\Http\Controllers\BundleController@create');
+        Route::post('/storebundle', 'App\Http\Controllers\BundleController@store');
+        Route::get('/bundle/{bundle}/edit', 'App\Http\Controllers\BundleController@edit');
+        Route::post('/getdatabundle', 'App\Http\Controllers\BundleController@getdata');
+        Route::post('/updatebundle/{bundle}', 'App\Http\Controllers\BundleController@update');
+        Route::post('/deletebundle', 'App\Http\Controllers\BundleController@destroy');
+        Route::post('/getlinksbundle', 'App\Http\Controllers\BundleController@getlinks');
+        Route::post('/getitemprice', 'App\Http\Controllers\BundleController@getItemPrice');
+
+        Route::get('/selling', 'App\Http\Controllers\SellingController@index')->name('selling');
+        Route::post('/getlistselling', 'App\Http\Controllers\SellingController@get_list');
+        Route::get('/selling/{selling}', 'App\Http\Controllers\SellingController@show');
+        Route::get('/createselling', 'App\Http\Controllers\SellingController@create');
+        Route::post('/storeselling', 'App\Http\Controllers\SellingController@store');
+        Route::get('/selling/{selling}/edit', 'App\Http\Controllers\SellingController@edit');
+        Route::post('/getdataselling', 'App\Http\Controllers\SellingController@getdata');
+        Route::post('/updateselling/{selling}', 'App\Http\Controllers\SellingController@update');
+        Route::post('/deleteselling', 'App\Http\Controllers\SellingController@destroy');
+        Route::post('/getoptionsselling', 'App\Http\Controllers\SellingController@getoptions');
+        Route::post('/getlinksselling', 'App\Http\Controllers\SellingController@getlinks');
     });
 });
 

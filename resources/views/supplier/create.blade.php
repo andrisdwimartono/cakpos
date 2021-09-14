@@ -5,9 +5,9 @@
                 @csrf
                     <div class="card-body">
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label" for="customer_name">Nama</label>
+                                <label class="col-sm-4 col-form-label" for="supplier_name">Nama</label>
                                 <div class="col-sm-6">
-                                    <input type="text" name="customer_name" class="form-control" id="customer_name" placeholder="Enter Nama" readonly>
+                                    <input type="text" name="supplier_name" class="form-control" id="supplier_name" placeholder="Enter Nama" readonly>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -24,12 +24,6 @@
                                 <input type="hidden" class="custom-file-input" id="photo_profile" name="photo_profile">    
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-4 col-form-label" for="id_card_number">No KTP/Passpor/SIM</label>
-                                <div class="col-sm-6">
-                                    <input type="text" name="id_card_number" class="form-control" id="id_card_number" placeholder="Enter No KTP/Passpor/SIM" @if($page_data["page_method_name"] == "View") readonly @endif>
-                                </div>
-                            </div>
-                            <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="first_name">Nama Depan</label>
                                 <div class="col-sm-6">
                                     <input type="text" name="first_name" class="form-control" id="first_name" placeholder="Enter Nama Depan" @if($page_data["page_method_name"] == "View") readonly @endif>
@@ -39,6 +33,12 @@
                                 <label class="col-sm-4 col-form-label" for="last_name">Nama Belakang</label>
                                 <div class="col-sm-6">
                                     <input type="text" name="last_name" class="form-control" id="last_name" placeholder="Enter Nama Belakang" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label" for="supplier_company">Perusahaan Pemasok</label>
+                                <div class="col-sm-6">
+                                    <input type="text" name="supplier_company" class="form-control" id="supplier_company" placeholder="Enter Perusahaan Pemasok" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -57,24 +57,6 @@
                                 <label class="col-sm-4 col-form-label" for="phone_2">No HP 2</label>
                                 <div class="col-sm-6">
                                     <input type="text" name="phone_2" class="form-control" id="phone_2" placeholder="Enter No HP 2" @if($page_data["page_method_name"] == "View") readonly @endif>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label" for="segment_level">Segmen</label>
-                                <div class="col-sm-6">
-                                    <select name="segment_level" id="segment_level" class="form-control select2bs4" style="width: 100%;" @if($page_data["page_method_name"] == "View") readonly @endif>
-
-                                    </select>
-                                    <input type="hidden" name="segment_level_label" id="segment_level_label">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-4 col-form-label" for="member_level">Member Level</label>
-                                <div class="col-sm-6">
-                                    <select name="member_level" id="member_level" class="form-control select2bs4" style="width: 100%;" @if($page_data["page_method_name"] == "View") readonly @endif>
-
-                                    </select>
-                                    <input type="hidden" name="member_level_label" id="member_level_label">
                                 </div>
                             </div>
                     </div>

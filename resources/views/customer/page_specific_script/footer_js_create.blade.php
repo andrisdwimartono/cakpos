@@ -16,6 +16,11 @@
     var editor;
 
 $(function () {
+    jQuery.validator.addMethod("phoneID", function(phone_number, element) {
+        phone_number = phone_number.replace(/\s+/g, "");
+        return this.optional(element) || phone_number.length > 9 && 
+        phone_number.match(/^([0-9]{10})|(\([0-9]{3}\)\s+[0-9]{3}\-[0-9]{4})$/);
+    }, "Nomor HP salah!!");
 
     $.validator.setDefaults({
         submitHandler: function (form, event) {
@@ -81,6 +86,21 @@ $("#segment_level").on("change", function() {
 $("#member_level").on("change", function() {
     $("#member_level_label").val($("#member_level option:selected").text());
 });
+
+$("#first_name").on("change", function() {
+    var first_name = $("#first_name").val();
+    var last_name = $("#last_name").val();
+    first_name = first_name == ""?"":first_name+" ";
+    $("#customer_name").val(first_name+last_name);
+});
+
+$("#last_name").on("change", function() {
+    var first_name = $("#first_name").val();
+    var last_name = $("#last_name").val();
+    first_name = first_name == ""?"":first_name+" ";
+    $("#customer_name").val(first_name+last_name);
+});
+
 var fields = $("#quickForm").serialize();
 
 $("#segment_level").select2({
@@ -155,10 +175,15 @@ $("#quickForm").validate({
             maxlength:255
         },
         email :{
-            maxlength:255
+            maxlength:255,
+            email: true
         },
         phone_1 :{
-            required: true
+            required: true,
+            phoneID: true
+        },
+        phone_2 :{
+            phoneID: true
         },
         segment_level :{
             required: true
@@ -186,10 +211,15 @@ $("#quickForm").validate({
             maxlength: "Nama Belakang maksimal 255 karakter!!"
         },
         email :{
-            maxlength: "Email maksimal 255 karakter!!"
+            maxlength: "Email maksimal 255 karakter!!",
+            email: "Format email salah!!"
         },
         phone_1 :{
-            required: "No HP 1 harus diisi!!"
+            required: "No HP 1 harus diisi!!",
+            matches: "Format No HP 1 salah"
+        },
+        phone_2 :{
+            matches: "Format No HP 2 salah"
         },
         segment_level :{
             required: "Segmen harus diisi!!"
@@ -241,7 +271,7 @@ function getdata(){
                     }else{
                         $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
                         $("textarea[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
-                        if([""photo_profile""].includes(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i])){
+                        if(["photo_profile"].includes(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i])){
                             if(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]] != null){
                                 $("#btn_"+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"").removeAttr("disabled");
                                 $("#btn_"+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"").addClass("btn-success text-white");

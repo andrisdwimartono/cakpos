@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
+use App\Models\Bundle_detail;
 use App\Models\Uom;
 use App\Models\Category;
 use App\Models\Product_stock;
@@ -469,5 +470,48 @@ class ProductController extends Controller
             ]);
         }
         return response()->json(['error'=>$validator->errors()->all()]);
+    }
+
+    public function getAvailableStock(Request $request)
+    {
+        if($request->ajax()){
+            $stock = null;
+            if(isset($request->warehouse)){
+                if(isset($request->is_bundle) && isset($request->bundle) && $request->is_bundle == "yes"){
+                    foreach(Bundle_detail::whereParentId($request->bundle)->get() as $bundles){
+                        $product_stock = Product_stock::whereParentId($bundles->product)->where("warehouse", $request->warehouse)->select(["stock"])->first();
+                        if(!$product_stock){
+                            $stock = 0;
+                            break;
+                        }else{
+                            if(!isset($stock)){
+                                $stock = $product_stock->stock/$bundles->quantity;
+                            }
+                        }
+                        if($product_stock && $stock > $product_stock->stock/$bundles->quantity){
+                            $stock = floor($product_stock->stock/$bundles->quantity);
+                        }
+                        
+                    }
+                }elseif(isset($request->product)){
+                    $product = Product_stock::whereParentId($request->product)->where("warehouse", $request->warehouse)->select(["stock"])->first();
+                    if($product){
+                        $stock = $product->stock;
+                    }
+                }
+            }else{
+                abort(417, "Parameter not complete");
+            }
+
+            $results = array(
+                "status" => 201,
+                "message" => "Data available",
+                "data" => [
+                    "stock" => !isset($stock)?0:$stock
+                ]
+            );
+
+            return response()->json($results);
+        }
     }
 }

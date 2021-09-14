@@ -463,7 +463,7 @@ function getdata(){
     @endif
 function addChildTable_product_stock(childtablename){
     $("input[name='company_id']").val("");
-    $("select[name='warehouse']").selectedIndex = -1;
+    $("select[name='warehouse']").empty();
     $("input[name='warehouse_label']").val("");
     $("input[name='stock']").val("");
 
@@ -494,10 +494,11 @@ function addChildTable_product_stock(childtablename){
 }
 
 function showChildTable_product_stock(childtablename, data){
-    var newState = new Option(data.data()[3], data.data()[2], true, false);
+    $("select[name='warehouse']").empty();
+    var newState = new Option(data.data()[2], data.data()[1], true, false);
     $("#warehouse").append(newState).trigger('change');
-    $("input[name='warehouse_label']").val(data.data()[3]);
-    $("input[name='stock']").val(data.data()[4]);
+    $("input[name='warehouse_label']").val(data.data()[2]);
+    $("input[name='stock']").val(data.data()[3]);
 
     @if($page_data["page_method_name"] != "View")
     $("#"+childtablename+" .modal-footer").html('<button type="button" id="staticBackdropUpdate_product_stock" class="btn btn-primary">Update</button>');
