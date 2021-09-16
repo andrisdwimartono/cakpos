@@ -485,7 +485,7 @@ class ProductController extends Controller
                             break;
                         }else{
                             if(!isset($stock)){
-                                $stock = $product_stock->stock/$bundles->quantity;
+                                $stock = floor($product_stock->stock/$bundles->quantity);
                             }
                         }
                         if($product_stock && $stock > $product_stock->stock/$bundles->quantity){
@@ -508,6 +508,26 @@ class ProductController extends Controller
                 "message" => "Data available",
                 "data" => [
                     "stock" => !isset($stock)?0:$stock
+                ]
+            );
+
+            return response()->json($results);
+        }
+    }
+
+    public function getItemBuyingPrice(Request $request)
+    {
+        if($request->ajax()){
+            $product = Product::whereId($request->id)->select(["id", "buying_price", "discount_percentage"])->first();
+            if(!$product){
+                abort(404, "Data not found");
+            }
+
+            $results = array(
+                "status" => 201,
+                "message" => "Data available",
+                "data" => [
+                    "product" => $product
                 ]
             );
 

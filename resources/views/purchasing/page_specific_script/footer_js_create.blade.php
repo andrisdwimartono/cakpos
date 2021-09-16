@@ -1,4 +1,4 @@
-<script src="{{ asset ("/assets/jquery/js/jquery-3.6.0.min.js") }}"></script>
+    <script src="{{ asset ("/assets/jquery/js/jquery-3.6.0.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/@popperjs/core/dist/umd/popper.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/gijgo/js/gijgo.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/jquery-toast-plugin/dist/jquery.toast.min.js") }}"></script>
@@ -19,7 +19,7 @@ $(function () {
     var dt = new Date();
     var tgl = (dt.getDate()<10?"0"+dt.getDate():dt.getDate())+"/"+((dt.getMonth()+1)<10?"0"+(dt.getMonth()+1):(dt.getMonth()+1))+"/"+dt.getFullYear()+" "+(dt.getHours()<10?"0"+dt.getHours():dt.getHours())+":"+(dt.getMinutes()<10?"0":dt.getMinutes())
     @if($page_data["page_method_name"] != "View")
-    $("#selling_datetime").datetimepicker({
+    $("#purchasing_datetime").datetimepicker({
         format:"dd/mm/yyyy HH:MM",
         modal: true,
         footer: true,
@@ -28,7 +28,7 @@ $(function () {
     });
     @endif
     @if($page_data["page_method_name"] != "View")
-    $("#paying_datetime").datetimepicker({
+    $("#buying_datetime").datetimepicker({
         format:"dd/mm/yyyy HH:MM",
         modal: true,
         footer: true,
@@ -42,12 +42,12 @@ $(function () {
             event.preventDefault();
             cto_loading_show();
             var quickForm = $("#quickForm");
-            var ctct1_selling_detail = [];
-            var table = $("#ctct1_selling_detail").DataTable().rows().data();
+            var ctct1_purchasing_detail = [];
+            var table = $("#ctct1_purchasing_detail").DataTable().rows().data();
             for(var i = 0; i < table.length; i++){
-                ctct1_selling_detail.push({"no_seq": table[i][0], "product_or_bundle": table[i][1], "product_or_bundle_label": table[i][2], "is_bundle": table[i][3], "product": table[i][4], "product_label": table[i][5], "bundle": table[i][6], "bundle_label": table[i][7], "selling_price": table[i][8], "quantity": table[i][9], "discount_percentage": table[i][10], "discount_total": table[i][11], "total": table[i][12], "warehouse": table[i][13], "warehouse_label": table[i][14], "id": table[i][table.columns().header().length-1]});
+                ctct1_purchasing_detail.push({"no_seq": table[i][0], "product": table[i][1], "product_label": table[i][2], "purchasing_price": table[i][3], "quantity": table[i][4], "discount_percentage": table[i][5], "discount_total": table[i][6], "total": table[i][7], "warehouse": table[i][8], "warehouse_label": table[i][9], "id": table[i][table.columns().header().length-1]});
             }
-            $("#ct1_selling_detail").val(JSON.stringify(ctct1_selling_detail));
+            $("#ct1_purchasing_detail").val(JSON.stringify(ctct1_purchasing_detail));
 
             var ctct2_payment_detail = [];
             var table = $("#ctct2_payment_detail").DataTable().rows().data();
@@ -93,8 +93,8 @@ $(function () {
                         $.each(err.responseJSON.errors, function (i, error) {
                             var validator = $("#quickForm").validate();
                             var errors = {};
-                            if(i == "product_or_bundle" || i == "product_or_bundle_label" || i == "is_bundle" || i == "product" || i == "product_label" || i == "bundle" || i == "bundle_label" || i == "selling_price" || i == "quantity" || i == "discount_percentage" || i == "discount_total" || i == "total" || i == "warehouse" || i == "warehouse_label"){
-                                errors["ct1_selling_detail"] = error[0];
+                            if(i == "product" || i == "product_label" || i == "purchasing_price" || i == "quantity" || i == "discount_percentage" || i == "discount_total" || i == "total" || i == "warehouse" || i == "warehouse_label"){
+                                errors["ct1_purchasing_detail"] = error[0];
                             }else{
                                 errors[i] = error[0];
                             }
@@ -119,29 +119,13 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {
 
 };
 
-
-
-$("#customer").on("change", function() {
-    $("#customer_label").val($("#customer option:selected").text());
+$("#supplier").on("change", function() {
+    $("#supplier_label").val($("#supplier option:selected").text());
 });
 
-$("#product_or_bundle").on("change", function() {
-    $("#product_or_bundle_label").val($("#product_or_bundle option:selected").text());
-    if($("#product_or_bundle").val().includes("BUN-")){
-        $("#is_bundle").val("yes");
-        $("#bundle").val($("#product_or_bundle").val().replace("BUN-", ""));
-        $("#bundle_label").val($("#product_or_bundle option:selected").text());
-        $("#product").val("");
-        $("#product_label").val("");
-        setSellingPrice($("#product_or_bundle").val().replace("BUN-", ""), "bundle");
-    }else{
-        $("#is_bundle").val("");
-        $("#bundle").val("");
-        $("#bundle_label").val("");
-        $("#product").val($("#product_or_bundle").val().replace("PRO-", ""));
-        $("#product_label").val($("#product_or_bundle option:selected").text());
-        setSellingPrice($("#product_or_bundle").val().replace("PRO-", ""), "product");
-    }
+$("#product").on("change", function() {
+    $("#product_label").val($("#product option:selected").text());
+    setPurchasingPrice($("#product").val());
     setAvailableStock();
 });
 
@@ -150,77 +134,77 @@ $("#warehouse").on("change", function() {
     setAvailableStock();
 });
 
-$("#selling_detail_total").on("change", function() {
-    var selling_detail_total = $("#selling_detail_total").val();
-    var selling_discount_percentage = $("#selling_discount_percentage").val();
-    $("#selling_discount_total").val(selling_detail_total*selling_discount_percentage/100);
-    var selling_discount_total = $("#selling_discount_total").val();
-    $("#selling_total").val(selling_detail_total-selling_discount_total);
+$("#purchasing_detail_total").on("change", function() {
+    var purchasing_detail_total = $("#purchasing_detail_total").val();
+    var purchasing_discount_percentage = $("#purchasing_discount_percentage").val();
+    $("#purchasing_discount_total").val(purchasing_detail_total*purchasing_discount_percentage/100);
+    var purchasing_discount_total = $("#purchasing_discount_total").val();
+    $("#purchasing_total").val(purchasing_detail_total-purchasing_discount_total);
 });
 
-$("#selling_discount_percentage").on("change", function() {
-    var selling_detail_total = $("#selling_detail_total").val();
-    var selling_discount_percentage = $("#selling_discount_percentage").val();
-    $("#selling_discount_total").val(selling_detail_total*selling_discount_percentage/100);
-    var selling_discount_total = $("#selling_discount_total").val();
-    $("#selling_total").val(selling_detail_total-selling_discount_total);
+$("#purchasing_discount_percentage").on("change", function() {
+    var purchasing_detail_total = $("#purchasing_detail_total").val();
+    var purchasing_discount_percentage = $("#purchasing_discount_percentage").val();
+    $("#purchasing_discount_total").val(purchasing_detail_total*purchasing_discount_percentage/100);
+    var purchasing_discount_total = $("#purchasing_discount_total").val();
+    $("#purchasing_total").val(purchasing_detail_total-purchasing_discount_total);
 });
 
-$("#selling_discount_total").on("change", function() {
-    var selling_detail_total = $("#selling_detail_total").val();
-    var selling_discount_total = $("#selling_discount_total").val();
-    $("#selling_discount_percentage").val(selling_discount_total*100/selling_detail_total);
-    var selling_discount_total = $("#selling_discount_total").val();
-    $("#selling_total").val(selling_detail_total-selling_discount_total);
+$("#purchasing_discount_total").on("change", function() {
+    var purchasing_detail_total = $("#purchasing_detail_total").val();
+    var purchasing_discount_total = $("#purchasing_discount_total").val();
+    $("#purchasing_discount_percentage").val(purchasing_discount_total*100/purchasing_detail_total);
+    var purchasing_discount_total = $("#purchasing_discount_total").val();
+    $("#purchasing_total").val(purchasing_detail_total-purchasing_discount_total);
 });
 
 $("#quantity").on("change", function() {
     var quantity = $("#quantity").val();
-    var selling_price = $("#selling_price").val();
+    var purchasing_price = $("#purchasing_price").val();
     var discount_percentage = $("#discount_percentage").val();
-    $("#discount_total").val(selling_price*discount_percentage/100);
+    $("#discount_total").val(purchasing_price*discount_percentage/100);
     var discount_total = $("#discount_total").val();
-    $("#total").val((selling_price-discount_total)*quantity);
+    $("#total").val((purchasing_price-discount_total)*quantity);
 });
 
-$("#selling_price").on("change", function() {
+$("#purchasing_price").on("change", function() {
     var quantity = $("#quantity").val();
-    var selling_price = $("#selling_price").val();
+    var purchasing_price = $("#purchasing_price").val();
     var discount_percentage = $("#discount_percentage").val();
-    $("#discount_total").val(selling_price*discount_percentage/100);
+    $("#discount_total").val(purchasing_price*discount_percentage/100);
     var discount_total = $("#discount_total").val();
-    $("#total").val((selling_price-discount_total)*quantity);
-    $("#paying_total").trigger("change");
+    $("#total").val((purchasing_price-discount_total)*quantity);
+    $("#buying_total").trigger("change");
 });
 
 $("#discount_percentage").on("change", function() {
     var quantity = $("#quantity").val();
-    var selling_price = $("#selling_price").val();
+    var purchasing_price = $("#purchasing_price").val();
     var discount_percentage = $("#discount_percentage").val();
-    $("#discount_total").val(selling_price*discount_percentage/100);
+    $("#discount_total").val(purchasing_price*discount_percentage/100);
     var discount_total = $("#discount_total").val();
-    $("#total").val((selling_price-discount_total)*quantity);
-    $("#paying_total").trigger("change");
+    $("#total").val((purchasing_price-discount_total)*quantity);
+    $("#buying_total").trigger("change");
 });
 
 $("#discount_total").on("change", function() {
     var quantity = $("#quantity").val();
-    var selling_price = $("#selling_price").val();
+    var purchasing_price = $("#purchasing_price").val();
     var discount_total = $("#discount_total").val();
-    $("#discount_percentage").val(discount_total*100/selling_price);
+    $("#discount_percentage").val(discount_total*100/purchasing_price);
     var discount_total = $("#discount_total").val();
-    $("#total").val((selling_price-discount_total)*quantity);
-    $("#paying_total").trigger("change");
+    $("#total").val((purchasing_price-discount_total)*quantity);
+    $("#buying_total").trigger("change");
 });
 
 $("#paying_method").on("change", function() {
     $("#paying_method_label").val($("#paying_method option:selected").text());
 });
 
-$("#paying_total").on("change", function() {
-    var selling_total = $("#selling_total").val();
-    var paying_total = $("#paying_total").val();
-    $("#change_total").val(paying_total-selling_total);
+$("#buying_total").on("change", function() {
+    var purchasing_total = $("#purchasing_total").val();
+    var buying_total = $("#buying_total").val();
+    $("#change_total").val(buying_total-purchasing_total);
 });
 
 var fields = $("#quickForm").serialize();
@@ -254,7 +238,7 @@ $.ajax({
     }
 });
 
-$("#customer").select2({
+$("#supplier").select2({
     ajax: {
         url: "/getlinks{{$page_data["page_data_urlname"]}}",
         type: "post",
@@ -263,7 +247,7 @@ $("#customer").select2({
             return {
                 term: params.term || "",
                 page: params.page,
-                field: "customer",
+                field: "supplier",
                 _token: $("input[name=_token]").val()
             }
         },
@@ -280,7 +264,7 @@ $("#customer").select2({
     }
 });
 
-$("#product_or_bundle").select2({
+$("#product").select2({
     ajax: {
         url: "/getlinks{{$page_data["page_data_urlname"]}}",
         type: "post",
@@ -289,15 +273,12 @@ $("#product_or_bundle").select2({
             return {
                 term: params.term || "",
                 page: params.page,
-                field: "product_or_bundle",
+                field: "product",
                 _token: $("input[name=_token]").val()
             }
         },
         processResults: function (data, params) {
             params.page = params.page || 1;
-            for(var i = 0; i < data.items.length; i++){
-                data.items[i].id = data.items[i].type;
-            }
             return {
                 results: data.items,
                 pagination: {
@@ -337,34 +318,34 @@ $("#warehouse").select2({
 
 $("#quickForm").validate({
     rules: {
-        selling_name :{
+        purchasing_name :{
             minlength:2,
             maxlength:255
         },
-        selling_datetime :{
+        purchasing_datetime :{
             required: true
         },
-        paying_datetime :{
+        buying_datetime :{
             required: true
         },
-        selling_detail_total :{
+        purchasing_detail_total :{
             required: true,
             number: true
         },
-        selling_discount_percentage :{
+        purchasing_discount_percentage :{
             required: true,
             number: true,
             max:100
         },
-        selling_discount_total :{
+        purchasing_discount_total :{
             required: true,
             number: true
         },
-        selling_total :{
+        purchasing_total :{
             required: true,
             number: true
         },
-        paying_total :{
+        buying_total :{
             required: true,
             number: true
         },
@@ -374,34 +355,34 @@ $("#quickForm").validate({
         },
     },
     messages: {
-        selling_name :{
+        purchasing_name :{
             minlength: "Kode Penjualan minimal 2 karakter!!",
             maxlength: "Kode Penjualan maksimal 255 karakter!!"
         },
-        selling_datetime :{
+        purchasing_datetime :{
             required: "Waktu Penjualan harus diisi!!"
         },
-        paying_datetime :{
+        buying_datetime :{
             required: "Waktu Pembayaran harus diisi!!"
         },
-        selling_detail_total :{
+        purchasing_detail_total :{
             required: "Total Detail Penjualan harus diisi!!",
             number: "Total Detail Penjualan harus berupa angka!!"
         },
-        selling_discount_percentage :{
+        purchasing_discount_percentage :{
             required: "Persen Diskon Penjualan harus diisi!!",
             number: "Persen Diskon Penjualan harus berupa angka!!",
             max: "Persen Diskon Penjualan maksimal 100!!"
         },
-        selling_discount_total :{
+        purchasing_discount_total :{
             required: "Nominal Diskon Penjualan harus diisi!!",
             number: "Nominal Diskon Penjualan harus berupa angka!!"
         },
-        selling_total :{
+        purchasing_total :{
             required: "Total Penjualan harus diisi!!",
             number: "Total Penjualan harus berupa angka!!"
         },
-        paying_total :{
+        buying_total :{
             required: "Total Pembayaran harus diisi!!",
             number: "Total Pembayaran harus berupa angka!!"
         },
@@ -423,15 +404,12 @@ $("#quickForm").validate({
     }
     });
 
-$("#quickModalForm_ct1_selling_detail").validate({
+$("#quickModalForm_ct1_purchasing_detail").validate({
     rules: {
-        product_or_bundle :{
+        product :{
             required: true
         },
-        is_bundle :{
-            required: true
-        },
-        selling_price :{
+        purchasing_price :{
             required: true,
             number: true
         },
@@ -455,13 +433,10 @@ $("#quickModalForm_ct1_selling_detail").validate({
         },
     },
     messages: {
-        product_or_bundle :{
-            required: "Produk / Bundle harus diisi!!"
+        product :{
+            required: "Produk harus diisi!!"
         },
-        is_bundle :{
-            required: "Apakah Bundle? harus diisi!!"
-        },
-        selling_price :{
+        purchasing_price :{
             required: "Harga Jual harus diisi!!",
             number: "Harga Jual harus berupa angka!!"
         },
@@ -537,7 +512,7 @@ $("#quickModalForm_ct1_selling_detail").validate({
 
 });
 $(document).ready(function() {
-    var table_ct1_selling_detail = $("#ctct1_selling_detail").DataTable({
+    var table_ct1_purchasing_detail = $("#ctct1_purchasing_detail").DataTable({
         @if($page_data["page_method_name"] != "View")
         rowReorder: true,
         @endif
@@ -547,46 +522,50 @@ $(document).ready(function() {
             {
                 text: "New",
                 action: function ( e, dt, node, config ) {
-                    $("#staticBackdrop_ct1_selling_detail").modal({"show": true});
-                    addChildTable_ct1_selling_detail("staticBackdrop_ct1_selling_detail");
+                    $("#staticBackdrop_ct1_purchasing_detail").modal({"show": true});
+                    addChildTable_ct1_purchasing_detail("staticBackdrop_ct1_purchasing_detail");
                 }
             }
         ]
         @endif
     });
 
-    table_ct1_selling_detail.column(table_ct1_selling_detail.columns().header().length-1).visible(false);
-    table_ct1_selling_detail.column(1).visible(false);
-    table_ct1_selling_detail.column(3).visible(false);
-    table_ct1_selling_detail.column(4).visible(false);
-    table_ct1_selling_detail.column(5).visible(false);
-    table_ct1_selling_detail.column(6).visible(false);
-    table_ct1_selling_detail.column(7).visible(false);
-    table_ct1_selling_detail.column(10).visible(false);
-    table_ct1_selling_detail.column(11).visible(false);
-    table_ct1_selling_detail.column(13).visible(false);
-    table_ct1_selling_detail.column(14).visible(false);
+    table_ct1_purchasing_detail.column(table_ct1_purchasing_detail.columns().header().length-1).visible(false);
+    table_ct1_purchasing_detail.column(1).visible(false);
+    table_ct1_purchasing_detail.column(5).visible(false);
+    table_ct1_purchasing_detail.column(6).visible(false);
+    table_ct1_purchasing_detail.column(8).visible(false);
+    table_ct1_purchasing_detail.column(9).visible(false);
+    // table_ct1_purchasing_detail.column(3).visible(false);
+    // table_ct1_purchasing_detail.column(4).visible(false);
+    // table_ct1_purchasing_detail.column(5).visible(false);
+    // table_ct1_purchasing_detail.column(6).visible(false);
+    // table_ct1_purchasing_detail.column(7).visible(false);
+    // table_ct1_purchasing_detail.column(10).visible(false);
+    // table_ct1_purchasing_detail.column(11).visible(false);
+    // table_ct1_purchasing_detail.column(13).visible(false);
+    // table_ct1_purchasing_detail.column(14).visible(false);
 
-    $("#ctct1_selling_detail tbody").on( "click", ".row-show", function () {
-        $("#staticBackdrop_ct1_selling_detail").modal({"show": true});
-        showChildTable_ct1_selling_detail("staticBackdrop_ct1_selling_detail", table_ct1_selling_detail.row( $(this).parents("tr") ));
+    $("#ctct1_purchasing_detail tbody").on( "click", ".row-show", function () {
+        $("#staticBackdrop_ct1_purchasing_detail").modal({"show": true});
+        showChildTable_ct1_purchasing_detail("staticBackdrop_ct1_purchasing_detail", table_ct1_purchasing_detail.row( $(this).parents("tr") ));
     } );
 
-    $("#staticBackdropClose_ct1_selling_detail").click(function(){
-        $("#staticBackdrop_ct1_selling_detail").modal("hide");
+    $("#staticBackdropClose_ct1_purchasing_detail").click(function(){
+        $("#staticBackdrop_ct1_purchasing_detail").modal("hide");
     });
 
-    table_ct1_selling_detail.on( "row-reorder", function ( e, diff, edit ) {
+    table_ct1_purchasing_detail.on( "row-reorder", function ( e, diff, edit ) {
             var result = "Reorder started on row: "+edit.triggerRow.data()[1]+"<br>";
             for ( var i=0, ien=diff.length ; i<ien ; i++ ) {
-                var rowData = table_ct1_selling_detail.row( diff[i].node ).data();
+                var rowData = table_ct1_purchasing_detail.row( diff[i].node ).data();
                 result += rowData[1]+" updated to be in position "+
                     diff[i].newData+" (was "+diff[i].oldData+")<br>";
             }
         $("#result").html( "Event result:<br>"+result );
     } );
-    $("#ctct1_selling_detail tbody").on("click", ".row-delete", function () {
-        table_ct1_selling_detail.row($(this).parents("tr")).remove().draw();
+    $("#ctct1_purchasing_detail tbody").on("click", ".row-delete", function () {
+        table_ct1_purchasing_detail.row($(this).parents("tr")).remove().draw();
     });
 
     var table_ct2_payment_detail = $("#ctct2_payment_detail").DataTable({
@@ -635,14 +614,14 @@ $(document).ready(function() {
 
     $("#is_paynow").on("change", function () {
         if($("#is_paynow").is(":checked")){
-            $("#fg_paying_total").removeClass("d-none");
+            $("#fg_buying_total").removeClass("d-none");
             $("#fg_change_total").removeClass("d-none");
-            $("#fg_paying_datetime").removeClass("d-none");
+            $("#fg_buying_datetime").removeClass("d-none");
             $("#fg_ct2_payment_detail").removeClass("d-none");
         }else{
-            $("#fg_paying_total").addClass("d-none");
+            $("#fg_buying_total").addClass("d-none");
             $("#fg_change_total").addClass("d-none");
-            $("#fg_paying_datetime").addClass("d-none");
+            $("#fg_buying_datetime").addClass("d-none");
             $("#fg_ct2_payment_detail").addClass("d-none");
         }
     });
@@ -668,7 +647,7 @@ function getdata(){
         },
         success: function(data){
             for(var i = 0; i < Object.keys(data.data.{{$page_data["page_data_urlname"]}}).length; i++){
-                if(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i] == "customer"){
+                if(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i] == "supplier"){
                     if(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]){
                         var newState = new Option(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"_label"], data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]], true, false);
                         $("#"+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]).append(newState).trigger("change");
@@ -694,11 +673,11 @@ function getdata(){
                 }
                 }
 
-            $("#ctct1_selling_detail").DataTable().clear().draw();
-            if(data.data.ct1_selling_detail.length > 0){
-                for(var i = 0; i < data.data.ct1_selling_detail.length; i++){
-                    var dttb = $('#ctct1_selling_detail').DataTable();
-                    var child_table_data = [data.data.ct1_selling_detail[i].no_seq, data.data.ct1_selling_detail[i].product_or_bundle, data.data.ct1_selling_detail[i].product_or_bundle_label, data.data.ct1_selling_detail[i].is_bundle, data.data.ct1_selling_detail[i].product, data.data.ct1_selling_detail[i].product_label, data.data.ct1_selling_detail[i].bundle, data.data.ct1_selling_detail[i].bundle_label, data.data.ct1_selling_detail[i].selling_price, data.data.ct1_selling_detail[i].quantity, data.data.ct1_selling_detail[i].discount_percentage, data.data.ct1_selling_detail[i].discount_total, data.data.ct1_selling_detail[i].total, data.data.ct1_selling_detail[i].warehouse, data.data.ct1_selling_detail[i].warehouse_label, @if($page_data["page_method_name"] != "View") '<div class="row-show"><i class="fa fa-eye" style="color:blue;cursor: pointer;"></i></div>     <div class="row-delete"><i class="fa fa-trash" style="color:red;cursor: pointer;"></i></div>' @else '<div class="row-show"><i class="fa fa-eye" style="color:blue;cursor: pointer;"></i></div>' @endif, data.data.ct1_selling_detail[i].id];
+            $("#ctct1_purchasing_detail").DataTable().clear().draw();
+            if(data.data.ct1_purchasing_detail.length > 0){
+                for(var i = 0; i < data.data.ct1_purchasing_detail.length; i++){
+                    var dttb = $('#ctct1_purchasing_detail').DataTable();
+                    var child_table_data = [data.data.ct1_purchasing_detail[i].no_seq, data.data.ct1_purchasing_detail[i].product, data.data.ct1_purchasing_detail[i].product_label, data.data.ct1_purchasing_detail[i].purchasing_price, data.data.ct1_purchasing_detail[i].quantity, data.data.ct1_purchasing_detail[i].discount_percentage, data.data.ct1_purchasing_detail[i].discount_total, data.data.ct1_purchasing_detail[i].total, data.data.ct1_purchasing_detail[i].warehouse, data.data.ct1_purchasing_detail[i].warehouse_label, @if($page_data["page_method_name"] != "View") '<div class="row-show"><i class="fa fa-eye" style="color:blue;cursor: pointer;"></i></div>     <div class="row-delete"><i class="fa fa-trash" style="color:red;cursor: pointer;"></i></div>' @else '<div class="row-show"><i class="fa fa-eye" style="color:blue;cursor: pointer;"></i></div>' @endif, data.data.ct1_purchasing_detail[i].id];
                     if(dttb.row.add(child_table_data).draw( false )){
 
                     }
@@ -736,16 +715,10 @@ function getdata(){
     });
 }
     @endif
-function addChildTable_ct1_selling_detail(childtablename){
-    //$("select[name='product_or_bundle']").selectedIndex = -1;
-    $("select[name='product_or_bundle']").empty();
-    $("input[name='product_or_bundle_label']").val("");
-    $("input[name='is_bundle']").val("");
-    $("input[name='product']").val("");
+function addChildTable_ct1_purchasing_detail(childtablename){
+    $("select[name='product']").empty();
     $("input[name='product_label']").val("");
-    $("input[name='bundle']").val("");
-    $("input[name='bundle_label']").val("");
-    $("input[name='selling_price']").val("");
+    $("input[name='purchasing_price']").val("");
     $("input[name='quantity']").val("");
     $("input[name='discount_percentage']").val("");
     $("input[name='discount_total']").val("");
@@ -755,25 +728,20 @@ function addChildTable_ct1_selling_detail(childtablename){
     $("input[name='available_stock']").val("");
 
     @if($page_data["page_method_name"] != "View")
-    $("#"+childtablename+" .modal-footer").html('<button type="button" id="staticBackdropAdd_ct1_selling_detail" class="btn btn-primary">Add Row</button>');
+    $("#"+childtablename+" .modal-footer").html('<button type="button" id="staticBackdropAdd_ct1_purchasing_detail" class="btn btn-primary">Add Row</button>');
     @endif
 
-    $("#staticBackdropAdd_ct1_selling_detail").click(function(e){
+    $("#staticBackdropAdd_ct1_purchasing_detail").click(function(e){
         e.preventDefault;
-        var dttb = $('#ctct1_selling_detail').DataTable();
+        var dttb = $('#ctct1_purchasing_detail').DataTable();
 
         var no_seq = dttb.rows().count();
-        var product_or_bundle = $("select[name='product_or_bundle'] option").filter(':selected').val();
-        if(!product_or_bundle){
-            product_or_bundle = null;
+        var product = $("select[name='product'] option").filter(':selected').val();
+        if(!product){
+            product = null;
         }
-        var product_or_bundle_label = $("input[name='product_or_bundle_label']").val();
-        var is_bundle = $("input[name='is_bundle']").val();
-        var product = $("input[name='product']").val();
         var product_label = $("input[name='product_label']").val();
-        var bundle = $("input[name='bundle']").val();
-        var bundle_label = $("input[name='bundle_label']").val();
-        var selling_price = $("input[name='selling_price']").val();
+        var purchasing_price = $("input[name='purchasing_price']").val();
         var quantity = $("input[name='quantity']").val();
         var discount_percentage = $("input[name='discount_percentage']").val();
         var discount_total = $("input[name='discount_total']").val();
@@ -784,69 +752,59 @@ function addChildTable_ct1_selling_detail(childtablename){
         }
         var warehouse_label = $("input[name='warehouse_label']").val();
 
-        var child_table_data = [no_seq+1, product_or_bundle, product_or_bundle_label, is_bundle, product, product_label, bundle, bundle_label, selling_price, quantity, discount_percentage, discount_total, total, warehouse, warehouse_label, '<div class="row-show"><i class="fa fa-eye" style="color:blue;cursor: pointer;"></i></div>     <div class="row-delete"><i class="fa fa-trash" style="color:red;cursor: pointer;"></i></div>', null];
+        var child_table_data = [no_seq+1, product, product_label, purchasing_price, quantity, discount_percentage, discount_total, total, warehouse, warehouse_label, '<div class="row-show"><i class="fa fa-eye" style="color:blue;cursor: pointer;"></i></div>     <div class="row-delete"><i class="fa fa-trash" style="color:red;cursor: pointer;"></i></div>', null];
 
-        if(validatequickModalForm_ct1_selling_detail()){
+        if(validatequickModalForm_ct1_purchasing_detail()){
             if(dttb.row.add(child_table_data).draw( false )){
-                var selling_detail_total = getTotalPrice();
-                $("#selling_detail_total").val(selling_detail_total).trigger('change');
-                $('#staticBackdrop_ct1_selling_detail').modal('hide');
+                var purchasing_detail_total = getTotalPrice();
+                $("#purchasing_detail_total").val(purchasing_detail_total).trigger('change');
+                $('#staticBackdrop_ct1_purchasing_detail').modal('hide');
             }
         }
     });
 }
 
-function showChildTable_ct1_selling_detail(childtablename, data){
-    $("select[name='product_or_bundle']").empty();
+function showChildTable_ct1_purchasing_detail(childtablename, data){
+    $("select[name='product']").empty();
     var newState = new Option(data.data()[2], data.data()[1], true, false);
-    $("#product_or_bundle").append(newState).trigger('change');
-    $("input[name='product_or_bundle_label']").val(data.data()[2]);
-    $("input[name='is_bundle']").val(data.data()[3]);
-    $("input[name='product']").val(data.data()[4]);
-    $("input[name='product_label']").val(data.data()[5]);
-    $("input[name='bundle']").val(data.data()[6]);
-    $("input[name='bundle_label']").val(data.data()[7]);
-    $("input[name='selling_price']").val(data.data()[8]);
-    $("input[name='quantity']").val(data.data()[9]);
-    $("input[name='discount_percentage']").val(data.data()[10]);
-    $("input[name='discount_total']").val(data.data()[11]);
-    $("input[name='total']").val(data.data()[12]);
+    $("#product").append(newState).trigger('change');
+    $("input[name='product_label']").val(data.data()[2]);
+    $("input[name='purchasing_price']").val(data.data()[3]);
+    $("input[name='quantity']").val(data.data()[4]);
+    $("input[name='discount_percentage']").val(data.data()[5]);
+    $("input[name='discount_total']").val(data.data()[6]);
+    $("input[name='total']").val(data.data()[7]);
     $("select[name='warehouse']").empty();
-    var newState = new Option(data.data()[14], data.data()[13], true, false);
+    var newState = new Option(data.data()[9], data.data()[8], true, false);
     $("#warehouse").append(newState).trigger('change');
-    $("input[name='warehouse_label']").val(data.data()[14]);
+    $("input[name='warehouse_label']").val(data.data()[9]);
 
     @if($page_data["page_method_name"] != "View")
-    $("#"+childtablename+" .modal-footer").html('<button type="button" id="staticBackdropUpdate_ct1_selling_detail" class="btn btn-primary">Update</button>');
+    $("#"+childtablename+" .modal-footer").html('<button type="button" id="staticBackdropUpdate_ct1_purchasing_detail" class="btn btn-primary">Update</button>');
     @endif
 
-    $("#staticBackdropUpdate_ct1_selling_detail").click(function(e){
+    $("#staticBackdropUpdate_ct1_purchasing_detail").click(function(e){
         var temp = data.data();
-        temp[1] = $("select[name='product_or_bundle'] option").filter(':selected').val();
-        if(!product_or_bundle){
-            product_or_bundle = null;
+        temp[1] = $("select[name='product'] option").filter(':selected').val();
+        if(!product){
+            product = null;
         }
-        temp[2] = $("input[name='product_or_bundle_label']").val();
-        temp[3] = $("input[name='is_bundle']").val();
-        temp[4] = $("input[name='product']").val();
-        temp[5] = $("input[name='product_label']").val();
-        temp[6] = $("input[name='bundle']").val();
-        temp[7] = $("input[name='bundle_label']").val();
-        temp[8] = $("input[name='selling_price']").val();
-        temp[9] = $("input[name='quantity']").val();
-        temp[10] = $("input[name='discount_percentage']").val();
-        temp[11] = $("input[name='discount_total']").val();
-        temp[12] = $("input[name='total']").val();
-        temp[13] = $("select[name='warehouse'] option").filter(':selected').val();
+        temp[2] = $("input[name='product_label']").val();
+        temp[3] = $("input[name='purchasing_price']").val();
+        temp[4] = $("input[name='quantity']").val();
+        temp[5] = $("input[name='discount_percentage']").val();
+        temp[6] = $("input[name='discount_total']").val();
+        temp[7] = $("input[name='total']").val();
+        temp[8] = $("select[name='warehouse'] option").filter(':selected').val();
         if(!warehouse){
             warehouse = null;
         }
-        temp[14] = $("input[name='warehouse_label']").val();
-        if( validatequickModalForm_ct1_selling_detail() ){
+        temp[9] = $("input[name='warehouse_label']").val();
+        if( validatequickModalForm_ct1_purchasing_detail() ){
             data.data(temp).invalidate();
-            var selling_detail_total = getTotalPrice();
-            $("#selling_detail_total").val(selling_detail_total).trigger('change');
-            $("#staticBackdrop_ct1_selling_detail").modal("hide");
+            var purchasing_detail_total = getTotalPrice();
+            $("#purchasing_detail_total").val(purchasing_detail_total).trigger('change');
+            $("#staticBackdrop_ct1_purchasing_detail").modal("hide");
         }
     });
 }
@@ -880,8 +838,8 @@ function addChildTable_ct2_payment_detail(childtablename){
 
         if(validatequickModalForm_ct2_payment_detail()){
             if(dttb.row.add(child_table_data).draw( false )){
-                var paying_total = getPayingTotal();
-                $("#paying_total").val(paying_total).trigger('change');
+                var buying_total = getbuyingTotal();
+                $("#buying_total").val(buying_total).trigger('change');
                 $('#staticBackdrop_ct2_payment_detail').modal('hide');
             }
         }
@@ -912,24 +870,21 @@ function showChildTable_ct2_payment_detail(childtablename, data){
         temp[5] = $("input[name='payment_notes']").val();
         if( validatequickModalForm_ct2_payment_detail() ){
             data.data(temp).invalidate();
-            var paying_total = getPayingTotal();
-            $("#paying_total").val(paying_total).trigger('change');
+            var buying_total = getbuyingTotal();
+            $("#buying_total").val(buying_total).trigger('change');
             $("#staticBackdrop_ct2_payment_detail").modal("hide");
         }
     });
 }
 
 
-function validatequickModalForm_ct1_selling_detail(){
-    var validation = $("#quickModalForm_ct1_selling_detail").validate({
+function validatequickModalForm_ct1_purchasing_detail(){
+    var validation = $("#quickModalForm_ct1_purchasing_detail").validate({
     rules: {
-        product_or_bundle :{
+        product :{
             required: true
         },
-        is_bundle :{
-            required: true
-        },
-        selling_price :{
+        purchasing_price :{
             required: true,
             number: true
         },
@@ -953,13 +908,10 @@ function validatequickModalForm_ct1_selling_detail(){
         },
     },
     messages: {
-        product_or_bundle :{
-            required: "Produk / Bundle harus diisi!!"
+        product :{
+            required: "Produk harus diisi!!"
         },
-        is_bundle :{
-            required: "Apakah Bundle? harus diisi!!"
-        },
-        selling_price :{
+        purchasing_price :{
             required: "Harga Jual harus diisi!!",
             number: "Harga Jual harus berupa angka!!"
         },
@@ -1052,38 +1004,37 @@ function validatequickModalForm_ct2_payment_detail(){
 
 
 function getTotalPrice(){
-    var table = $("#ctct1_selling_detail").DataTable().rows().data();
+    var table = $("#ctct1_purchasing_detail").DataTable().rows().data();
     var total_price = 0;
     for(var i = 0; i < table.length; i++){
-        total_price += parseFloat(table[i][12]);
+        total_price += parseFloat(table[i][7]);
     }
     return total_price;
 }
 
-function getPayingTotal(){
+function getbuyingTotal(){
     var table = $("#ctct2_payment_detail").DataTable().rows().data();
-    var paying_total = 0;
+    var buying_total = 0;
     for(var i = 0; i < table.length; i++){
-        paying_total += parseFloat(table[i][4]);
+        buying_total += parseFloat(table[i][4]);
     }
-    return paying_total;
+    return buying_total;
 }
 
-function setSellingPrice(id, type){
+function setPurchasingPrice(id){
     cto_loading_show();
     $.ajax({
-        url: "/getitemprice",
+        url: "/getitembuyingprice",
         type: "post",
         data: {
             id: id,
-            type: type,
             _token: $("#quickForm input[name=_token]").val()
         },
         success: function(data){
             if($("#quantity").val() == "" || $("#quantity").val() == 0){
                 $("#quantity").val(1);
             }
-            $("#selling_price").val(data.data.product.selling_price).trigger("change");
+            $("#purchasing_price").val(data.data.product.buying_price).trigger("change");
             $("#discount_percentage").val(data.data.product.discount_percentage).trigger("change");
             cto_loading_hide();
         },
@@ -1107,7 +1058,7 @@ function setSellingPrice(id, type){
 }
 
 function setAvailableStock(){
-    if(!$("select[name=warehouse]").val()){
+    if(!$("select[name=product]").val() || !$("select[name=warehouse]").val()){
         return;
     }
     cto_loading_show();
@@ -1115,9 +1066,7 @@ function setAvailableStock(){
         url: "/getavailablestock",
         type: "post",
         data: {
-            is_bundle: $("input[name=is_bundle]").val(),
-            product: $("input[name=product]").val(),
-            bundle: $("input[name=bundle]").val(),
+            product: $("select[name=product]").val(),
             warehouse: $("select[name=warehouse]").val(),
             _token: $("#quickForm input[name=_token]").val()
         },

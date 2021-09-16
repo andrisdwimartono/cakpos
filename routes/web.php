@@ -102,6 +102,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/getlinksproduct', 'App\Http\Controllers\ProductController@getlinks');
         Route::post('/uploadfileproduct', 'App\Http\Controllers\ProductController@storeUploadFile');
         Route::post('/getavailablestock', 'App\Http\Controllers\ProductController@getAvailableStock');
+        Route::post('/getitembuyingprice', 'App\Http\Controllers\ProductController@getItemBuyingPrice');
 
         Route::get('/warehouse', 'App\Http\Controllers\WarehouseController@index')->name('warehouse');
         Route::post('/getlistwarehouse', 'App\Http\Controllers\WarehouseController@get_list');
@@ -167,7 +168,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/deletebundle', 'App\Http\Controllers\BundleController@destroy');
         Route::post('/getlinksbundle', 'App\Http\Controllers\BundleController@getlinks');
         Route::post('/getitemprice', 'App\Http\Controllers\BundleController@getItemPrice');
-
+        
         Route::get('/selling', 'App\Http\Controllers\SellingController@index')->name('selling');
         Route::post('/getlistselling', 'App\Http\Controllers\SellingController@get_list');
         Route::get('/selling/{selling}', 'App\Http\Controllers\SellingController@show');
@@ -179,6 +180,18 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/deleteselling', 'App\Http\Controllers\SellingController@destroy');
         Route::post('/getoptionsselling', 'App\Http\Controllers\SellingController@getoptions');
         Route::post('/getlinksselling', 'App\Http\Controllers\SellingController@getlinks');
+
+        Route::get('/purchasing', 'App\Http\Controllers\PurchasingController@index')->name('purchasing');
+        Route::post('/getlistpurchasing', 'App\Http\Controllers\PurchasingController@get_list');
+        Route::get('/purchasing/{purchasing}', 'App\Http\Controllers\PurchasingController@show');
+        Route::get('/createpurchasing', 'App\Http\Controllers\PurchasingController@create');
+        Route::post('/storepurchasing', 'App\Http\Controllers\PurchasingController@store');
+        Route::get('/purchasing/{purchasing}/edit', 'App\Http\Controllers\PurchasingController@edit');
+        Route::post('/getdatapurchasing', 'App\Http\Controllers\PurchasingController@getdata');
+        Route::post('/updatepurchasing/{purchasing}', 'App\Http\Controllers\PurchasingController@update');
+        Route::post('/deletepurchasing', 'App\Http\Controllers\PurchasingController@destroy');
+        Route::post('/getoptionspurchasing', 'App\Http\Controllers\PurchasingController@getoptions');
+        Route::post('/getlinkspurchasing', 'App\Http\Controllers\PurchasingController@getlinks');
     });
 });
 
