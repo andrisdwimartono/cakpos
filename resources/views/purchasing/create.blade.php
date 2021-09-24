@@ -62,25 +62,25 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="purchasing_detail_total">Total Detail Pengadaan</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="purchasing_detail_total" class="form-control" id="purchasing_detail_total" placeholder="Enter Total Detail Pengadaan" readonly>
+                                    <input type="text" name="purchasing_detail_total" class="form-control cakautonumeric cakautonumeric-float" id="purchasing_detail_total" placeholder="Enter Total Detail Pengadaan" readonly>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="purchasing_discount_percentage">Persen Diskon Pengadaan</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="purchasing_discount_percentage" class="form-control" id="purchasing_discount_percentage" placeholder="Enter Persen Diskon Pengadaan" @if($page_data["page_method_name"] == "Create" || $page_data["page_method_name"] == "Edit") value="0" @endif @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="purchasing_discount_percentage" class="form-control cakautonumeric cakautonumeric-float" id="purchasing_discount_percentage" placeholder="Enter Persen Diskon Pengadaan" @if($page_data["page_method_name"] == "Create" || $page_data["page_method_name"] == "Edit") value="0" @endif @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="purchasing_discount_total">Nominal Diskon Pengadaan</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="purchasing_discount_total" class="form-control" id="purchasing_discount_total" placeholder="Enter Nominal Diskon Pengadaan" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="purchasing_discount_total" class="form-control cakautonumeric cakautonumeric-float" id="purchasing_discount_total" placeholder="Enter Nominal Diskon Pengadaan" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="purchasing_total">Total Pengadaan</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="purchasing_total" class="form-control" id="purchasing_total" placeholder="Enter Total Pengadaan" readonly>
+                                    <input type="text" name="purchasing_total" class="form-control cakautonumeric cakautonumeric-float" id="purchasing_total" placeholder="Enter Total Pengadaan" readonly>
                                 </div>
                             </div>
                         <div class="form-group row">
@@ -117,13 +117,13 @@
                             <div class="form-group row" id="fg_buying_total">
                                 <label class="col-sm-4 col-form-label" for="buying_total">Total Pembelian</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="buying_total" class="form-control" id="buying_total" placeholder="Enter Total Pembelian" @if($page_data["page_method_name"] == "Create" || $page_data["page_method_name"] == "Edit") Value="0" @endif readonly>
+                                    <input type="text" name="buying_total" class="form-control cakautonumeric cakautonumeric-float" id="buying_total" placeholder="Enter Total Pembelian" @if($page_data["page_method_name"] == "Create" || $page_data["page_method_name"] == "Edit") Value="0" @endif readonly>
                                 </div>
                             </div>
                             <div class="form-group row" id="fg_change_total">
                                 <label class="col-sm-4 col-form-label" for="change_total">Total Kembalian</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="change_total" class="form-control" id="change_total" placeholder="Enter Total Kembalian" @if($page_data["page_method_name"] == "Create" || $page_data["page_method_name"] == "Edit") Value="0" @endif readonly>
+                                    <input type="text" name="change_total" class="form-control cakautonumeric cakautonumeric-float" id="change_total" placeholder="Enter Total Kembalian" @if($page_data["page_method_name"] == "Create" || $page_data["page_method_name"] == "Edit") Value="0" @endif readonly>
                                 </div>
                             </div>
                             <div class="form-group row" id="fg_buying_datetime">
@@ -169,7 +169,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="purchasing_price">Harga Beli</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="purchasing_price" class="form-control" id="purchasing_price" placeholder="Enter Harga Beli" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                        <input type="text" name="purchasing_price" class="form-control cakautonumeric cakautonumeric-float" id="purchasing_price" placeholder="Enter Harga Beli" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -184,31 +184,31 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="available_stock">Sisa</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="available_stock" class="form-control" id="available_stock" placeholder="Sisa" readonly>
+                                        <input type="text" name="available_stock" class="form-control cakautonumeric cakautonumeric-float" id="available_stock" placeholder="Sisa" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="quantity">Kuantitas</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="quantity" class="form-control" id="quantity" placeholder="Enter Kuantitas" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                        <input type="text" name="quantity" class="form-control cakautonumeric cakautonumeric-float" id="quantity" placeholder="Enter Kuantitas" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="discount_percentage">Persen Diskon</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="discount_percentage" class="form-control" id="discount_percentage" placeholder="Enter Persen Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                        <input type="text" name="discount_percentage" class="form-control cakautonumeric cakautonumeric-float" id="discount_percentage" placeholder="Enter Persen Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="discount_total">Nominal Diskon</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="discount_total" class="form-control" id="discount_total" placeholder="Enter Nominal Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                        <input type="text" name="discount_total" class="form-control cakautonumeric cakautonumeric-float" id="discount_total" placeholder="Enter Nominal Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="total">Total</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="total" class="form-control" id="total" placeholder="Enter Total" readonly>
+                                        <input type="text" name="total" class="form-control cakautonumeric cakautonumeric-float" id="total" placeholder="Enter Total" readonly>
                                     </div>
                                 </div>
                             </form>
@@ -243,7 +243,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="paying">Nominal Bayar</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="paying" class="form-control" id="paying" placeholder="Enter Nominal Bayar" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                        <input type="text" name="paying" class="form-control cakautonumeric cakautonumeric-float" id="paying" placeholder="Enter Nominal Bayar" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                                 <div class="form-group row">

@@ -76,19 +76,6 @@ $(function () {
         submitHandler: function (form, event) {
             event.preventDefault();
             cto_loading_show();
-            if(anObject["paying_total"] < anObject["selling_total"]){
-                $.toast({
-                    text: "Total Pembayaran Kurang!!",
-                    heading: 'Status',
-                    icon: 'success',
-                    showHideTransition: 'fade',
-                    allowToastClose: true,
-                    hideAfter: 3000,
-                    position: 'mid-center',
-                    textAlign: 'left'
-                });
-                return;
-            }
             var quickForm = $("#quickForm");
             var ctct1_selling_detail = [];
             var table = $("#ctct1_selling_detail").DataTable().rows().data();

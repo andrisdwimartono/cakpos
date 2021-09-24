@@ -32,8 +32,26 @@
 	
   function fetch_data(){
     cto_loading_show();
+    var target = [];
+    $('#example1 thead tr th').each(function(i, obj) {
+        target.push(i);
+    });
+    target.shift();
     $('#example1').DataTable().destroy();
     var dataTable = $('#example1').DataTable({
+      aoColumnDefs: [{
+            aTargets: target,
+            mRender: function (data, type, full){
+              if(data != null && !isNaN(data)){
+                var formattedvalue = parseFloat(data).toFixed(2);
+                formattedvalue = formattedvalue.toString().replace(".", ",");
+                formattedvalue = formattedvalue.toString().replace(/(\d+)(\d{3})/, '$1'+'.'+'$2');
+                return formattedvalue;
+              }else{
+                return data;
+              }
+            }
+        }],
       "autoWidth": false,
       dom: 'Bfrtip',
       "scrollX" : true,
