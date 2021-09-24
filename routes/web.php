@@ -38,7 +38,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/updatemenu/{menu}', 'App\Http\Controllers\MenuController@update');
         Route::post('/deletemenu', 'App\Http\Controllers\MenuController@destroy');
 
-
         Route::get('/user', 'App\Http\Controllers\UserController@index')->name('user');
         Route::post('/getlistuser', 'App\Http\Controllers\UserController@get_list');
         Route::get('/user/{user}', 'App\Http\Controllers\UserController@show');
@@ -55,6 +54,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/getdataassignmenuuser', 'App\Http\Controllers\UserController@getdataassignmenuuser');
         Route::post('/getdataassignmenuuserrole', 'App\Http\Controllers\UserController@getdataassignmenuuserrole');
         Route::post('/updateassignmenuuser/{user}', 'App\Http\Controllers\UserController@updateassignmenu');
+        Route::get('/getusermenu', 'App\Http\Controllers\UserController@getUserMenu');
         Route::get('/chartusertotal', 'App\Http\Controllers\UserController@chartusertotal');
         Route::post('/getchartusertotal', 'App\Http\Controllers\UserController@getchartusertotal');
 
@@ -145,6 +145,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/deletecustomer', 'App\Http\Controllers\CustomerController@destroy');
         Route::post('/getlinkscustomer', 'App\Http\Controllers\CustomerController@getlinks');
         Route::post('/uploadfilecustomer', 'App\Http\Controllers\CustomerController@storeUploadFile');
+        Route::post('/getcustomerdiscount', 'App\Http\Controllers\CustomerController@getCustomerDiscount');
 
         Route::get('/supplier', 'App\Http\Controllers\SupplierController@index')->name('supplier');
         Route::post('/getlistsupplier', 'App\Http\Controllers\SupplierController@get_list');

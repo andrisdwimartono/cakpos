@@ -2,6 +2,7 @@
     <script src="{{ asset ("/assets/node_modules/@popperjs/core/dist/umd/popper.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/gijgo/js/gijgo.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/jquery-toast-plugin/dist/jquery.toast.min.js") }}"></script>
+    <script src="{{ asset ("/assets/node_modules/autonumeric/dist/autoNumeric.min.js") }}"></script>
     <script src="{{ asset ("/assets/bootstrap/dist/js/bootstrap.bundle.min.js") }}"></script>
     <script src="{{ asset ("/assets/bower_components/jquery-validation/dist/jquery.validate.min.js") }}"></script>
     <script src="{{ asset ("/assets/bower_components/select2/dist/js/select2.full.min.js") }}"></script>
@@ -516,6 +517,15 @@ $(document).ready(function() {
         @if($page_data["page_method_name"] != "View")
         rowReorder: true,
         @endif
+        aoColumnDefs: [{
+            aTargets: [3, 7],
+            mRender: function (data, type, full){
+                var formattedvalue = parseFloat(data).toFixed(2);
+                formattedvalue = formattedvalue.toString().replace(".", ",");
+                formattedvalue = formattedvalue.toString().replace(/(\d+)(\d{3})/, '$1'+'.'+'$2');
+                return formattedvalue;
+            }
+        }],
         //add button
         dom: "Bfrtip" @if($page_data["page_method_name"] != "View") ,
         buttons: [
@@ -814,7 +824,7 @@ function addChildTable_ct2_payment_detail(childtablename){
     $("select[name='paying_method']").selectedIndex = -1;
     $("input[name='paying_method_label']").val("");
     $("input[name='paying']").val("");
-    $("input[name='payment_notes']").val("");
+    $("textarea[name='payment_notes']").val("");
 
     @if($page_data["page_method_name"] != "View")
     $("#"+childtablename+" .modal-footer").html('<button type="button" id="staticBackdropAdd_ct2_payment_detail" class="btn btn-primary">Add Row</button>');
@@ -852,7 +862,7 @@ function showChildTable_ct2_payment_detail(childtablename, data){
     $("select[name='paying_method']").select2().trigger('change');
     $("input[name='paying_method_label']").val(data.data()[3]);
     $("input[name='paying']").val(data.data()[4]);
-    $("input[name='payment_notes']").val(data.data()[5]);
+    $("textarea[name='payment_notes']").val(data.data()[5]);
 
     @if($page_data["page_method_name"] != "View")
     $("#"+childtablename+" .modal-footer").html('<button type="button" id="staticBackdropUpdate_ct2_payment_detail" class="btn btn-primary">Update</button>');
@@ -867,7 +877,7 @@ function showChildTable_ct2_payment_detail(childtablename, data){
         }
         temp[3] = $("input[name='paying_method_label']").val();
         temp[4] = $("input[name='paying']").val();
-        temp[5] = $("input[name='payment_notes']").val();
+        temp[5] = $("textarea[name='payment_notes']").val();
         if( validatequickModalForm_ct2_payment_detail() ){
             data.data(temp).invalidate();
             var buying_total = getbuyingTotal();

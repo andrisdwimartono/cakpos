@@ -2,6 +2,7 @@
     <script src="{{ asset ("/assets/node_modules/@popperjs/core/dist/umd/popper.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/gijgo/js/gijgo.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/jquery-toast-plugin/dist/jquery.toast.min.js") }}"></script>
+    <script src="{{ asset ("/assets/node_modules/autonumeric/dist/autoNumeric.min.js") }}"></script>
     <script src="{{ asset ("/assets/bootstrap/dist/js/bootstrap.bundle.min.js") }}"></script>
     <script src="{{ asset ("/assets/bower_components/jquery-validation/dist/jquery.validate.min.js") }}"></script>
     <script src="{{ asset ("/assets/bower_components/select2/dist/js/select2.full.min.js") }}"></script>
@@ -14,6 +15,26 @@
     <script src="{{ asset ("/assets/cto/js/dateformatvalidation.min.js") }}"></script>
 <script>
     var editor;
+    const anElement = AutoNumeric.multiple('.cakautonumeric-float', {
+        decimalCharacter    : ',',
+        digitGroupSeparator : '.',
+        minimumValue        : 0,
+        decimalPlaces       : 2,
+        unformatOnSubmit    : true 
+    });
+
+    anObject = {};
+    for(var i = 0; i < anElement.length; i++){
+        anObject[anElement[i].domElement.name] = anElement[i];
+    }
+    anObject["discount_percentage"].settings.maximumValue = 100;
+    
+    function reRunAutonumeric(){
+        Object.keys(anObject).forEach(function(key) {
+            anObject[key].set(anObject[key].rawValue);
+            $("#"+anObject[key].domElement.name).trigger("change");
+        });
+    }
 
 $(function () {
 
@@ -47,6 +68,7 @@ $(function () {
                                 textAlign: 'left'
                             });
                     }
+                    reRunAutonumeric();
                     cto_loading_hide();
                     @if($page_data["page_method_name"] == "Update")
                     getdata();
@@ -83,13 +105,10 @@ $("#quickForm").validate({
             maxlength:70
         },
         discount_percentage :{
-            required: true,
-            number: true,
-            max:100
+            required: true
         },
         discount :{
-            required: true,
-            number: true
+            required: true
         },
     },
     messages: {
@@ -98,13 +117,10 @@ $("#quickForm").validate({
             maxlength: "Level maksimal 70 karakter!!"
         },
         discount_percentage :{
-            required: "Persen Diskon harus diisi!!",
-            number: "Persen Diskon harus berupa angka!!",
-            max: "Persen Diskon maksimal 100!!"
+            required: "Persen Diskon harus diisi!!"
         },
         discount :{
-            required: "Nominal Diskon harus diisi!!",
-            number: "Nominal Diskon harus berupa angka!!"
+            required: "Nominal Diskon harus diisi!!"
         },
     },
     errorElement: "span",
@@ -142,7 +158,11 @@ function getdata(){
                 if(["ewfsdfsafdsafasdfasdferad"].includes(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i])){
                     $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").prop("checked", data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
                 }else{
-                    $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
+                    try{
+                        anObject[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]].set(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
+                    }catch(err){
+                        $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
+                    }
                     $("textarea[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
                         if(["ewfsdfsafdsafasdfasdferad"].includes(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i])){
                             if(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]] != null){

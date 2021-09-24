@@ -172,8 +172,11 @@
             @if($page_data["page_method_name"] != "View")
             rowReorder: true,
             @endif
+            scrollX: true,
+            bLengthChange: true,
+            lengthChange: true,
             //add button
-            dom: 'Bfrtip' @if($page_data["page_method_name"] != "View") ,
+            dom: 'Blfrtip' @if($page_data["page_method_name"] != "View") ,
             buttons: [
                 {
                     text: 'New',
@@ -185,6 +188,8 @@
             ]
             @endif
         });
+
+        $(".dt-buttons").css("margin-right", "30px");
 
         //hide last column, id
         table.column(table.columns().header().length-1).visible(false);

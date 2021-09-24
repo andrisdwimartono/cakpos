@@ -354,4 +354,53 @@ class CustomerController extends Controller
         }
         return response()->json(['error'=>$validator->errors()->all()]);
     }
+
+    public function getCustomerDiscount(Request $request){
+        if($request->ajax()){
+            $customer = Customer::whereId($request->customer)->select(["id", "segment_level", "member_level"])->first();
+            
+            if(!$customer){
+                abort(404, "Data not found");
+            }
+
+            $member_level = Member_level::whereId($customer->member_level)->select(["id", "member_level_name", "discount_percentage", "discount"])->first();
+
+            $segment_level = Segment_level::whereId($customer->segment_level)->select(["id", "segment_level_name", "discount_percentage", "discount"])->first();
+
+            //discount priority is getting from discount percentage
+            if($member_level->discount_percentage > 0 || $segment_level->discount_percentage > 0){
+                $customer->is_discount_percentage = true;
+                if($member_level->discount_percentage > $segment_level->discount_percentage ){
+                    $customer->discount_from = "Member";
+                    $customer->level_name = $member_level->member_level_name;
+                    $customer->discount_percentage = $member_level->discount_percentage;
+                }else{
+                    $customer->discount_from = "Segment";
+                    $customer->level_name = $segment_level->segment_level_name;
+                    $customer->discount_percentage = $segment_level->discount_percentage;
+                }
+            }else{
+                $customer->is_discount_percentage = false;
+                if($member_level->discount_percentage > $segment_level->discount_percentage ){
+                    $customer->discount_from = "Member";
+                    $customer->level_name = $member_level->member_level_name;
+                    $customer->discount = $member_level->discount;
+                }else{
+                    $customer->discount_from = "Segment";
+                    $customer->level_name = $segment_level->segment_level_name;
+                    $customer->discount = $segment_level->discount;
+                }
+            }
+
+            $results = array(
+                "status" => 201,
+                "message" => "Data available",
+                "data" => [
+                    "customer" => $customer
+                ]
+            );
+
+            return response()->json($results);
+        }
+    }
 }

@@ -387,6 +387,7 @@ class SellingController extends Controller
             $new_menu_field_ids = array();
             foreach($requests_ct1_selling_detail as $ct_request){
                 if(isset($ct_request["id"])){
+                    $quantity_before = Selling_detail::where("id", $ct_request["id"])->first()->quantity;
                     Selling_detail::where("id", $ct_request["id"])->update([
                         "no_seq" => $ct_request["no_seq"],
                         "parent_id" => $id,
@@ -406,6 +407,17 @@ class SellingController extends Controller
                         "bundle_label"=> $ct_request["bundle_label"],
                         "user_updater_id" => Auth::user()->id
                     ]);
+
+                    if($ct_request["is_bundle"] == "yes"){
+                        if($ct_request["bundle"]){
+                            foreach(Bundle_detail::whereParentId($ct_request["bundle"])->get() as $bundles){
+                                $product_stock = Product_stock::whereParentId($bundles->product)->where("warehouse", $ct_request["warehouse"])->decrement("stock", $ct_request["quantity"]*($bundles->quantity-$quantity_before));
+                                
+                            }
+                        }
+                    }else{
+                        Product_stock::whereParentId($ct_request["product"])->where("warehouse", $ct_request["warehouse"])->decrement("stock", $ct_request["quantity"]-$quantity_before);
+                    }
                 }else{
                     $idct = Selling_detail::create([
                         "no_seq" => $ct_request["no_seq"],
@@ -427,6 +439,17 @@ class SellingController extends Controller
                         "user_creator_id" => Auth::user()->id
                     ])->id;
                     array_push($new_menu_field_ids, $idct);
+
+                    if($ct_request["is_bundle"] == "yes"){
+                        if($ct_request["bundle"]){
+                            foreach(Bundle_detail::whereParentId($ct_request["bundle"])->get() as $bundles){
+                                $product_stock = Product_stock::whereParentId($bundles->product)->where("warehouse", $ct_request["warehouse"])->decrement("stock", $ct_request["quantity"]*$bundles->quantity);
+                                
+                            }
+                        }
+                    }else{
+                        Product_stock::whereParentId($ct_request["product"])->where("warehouse", $ct_request["warehouse"])->decrement("stock", $ct_request["quantity"]);
+                    }
                 }
             }
 
@@ -438,7 +461,9 @@ class SellingController extends Controller
                     }
                 }
                 if(!$is_still_exist){
+                    $selling_detail = Selling_detail::where("id", $ch->id)->first();
                     Selling_detail::whereId($ch->id)->delete();
+                    Product_stock::whereParentId($selling_detail->product)->where("warehouse", $selling_detail->warehouse)->increment("stock", $selling_detail->quantity);
                 }
             }
 

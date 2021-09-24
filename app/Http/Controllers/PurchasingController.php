@@ -369,6 +369,7 @@ class PurchasingController extends Controller
             $new_menu_field_ids = array();
             foreach($requests_ct1_purchasing_detail as $ct_request){
                 if(isset($ct_request["id"])){
+                    $quantity_before = Purchasing_detail::where("id", $ct_request["id"])->first()->quantity;
                     Purchasing_detail::where("id", $ct_request["id"])->update([
                         "no_seq" => $ct_request["no_seq"],
                         "parent_id" => $id,
@@ -383,6 +384,10 @@ class PurchasingController extends Controller
                         "warehouse_label"=> $ct_request["warehouse_label"],
                         "user_updater_id" => Auth::user()->id
                     ]);
+
+                    if($ct_request["product"] && $ct_request["warehouse"]){
+                        Product_stock::whereParentId($ct_request["product"])->where("warehouse", $ct_request["warehouse"])->increment("stock", $ct_request["quantity"]-$quantity_before);
+                    }
                 }else{
                     $idct = Purchasing_detail::create([
                         "no_seq" => $ct_request["no_seq"],
@@ -399,6 +404,10 @@ class PurchasingController extends Controller
                         "user_creator_id" => Auth::user()->id
                     ])->id;
                     array_push($new_menu_field_ids, $idct);
+
+                    if($ct_request["product"] && $ct_request["warehouse"]){
+                        Product_stock::whereParentId($ct_request["product"])->where("warehouse", $ct_request["warehouse"])->increment("stock", $ct_request["quantity"]);
+                    }
                 }
             }
 
@@ -410,7 +419,9 @@ class PurchasingController extends Controller
                     }
                 }
                 if(!$is_still_exist){
+                    $purchasing_detail = Purchasing_detail::where("id", $ct_request["id"])->first();
                     Purchasing_detail::whereId($ch->id)->delete();
+                    Product_stock::whereParentId($purchasing_detail->product)->where("warehouse", $purchasing_detail->warehouse)->decrement("stock", $purchasing_detail->quantity);
                 }
             }
 

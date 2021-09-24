@@ -5,7 +5,7 @@
     @endphp
 @endif
 
-@php
+<!-- @php
   $usermenus = Auth::user()->getUserMenu;
   $last_parent_id = 0;
   $parent_active_id = 0;
@@ -26,7 +26,7 @@
       }
     }
   @endphp
-@endforeach
+@endforeach -->
 <!DOCTYPE html>
 <html>
   <head>
@@ -43,6 +43,12 @@
   @endif
   </head>
 <body>
+  @php
+    $path = Request::path();
+    $path = explode("/", $path)[0];
+    $path = str_replace("create", "", $path);
+  @endphp
+<input type="hidden" id="cakcurrent_url" value="{{$path}}">
 <div class="wrapper">
   @include('paging.sidebar')
   <div id="content">

@@ -10,21 +10,21 @@
 
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="nav navbar-nav mr-auto">
-                                <li class="nav-item active">
-                                    <a class="nav-link" href="#">Page</a>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/home">Home</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Page</a>
+                                    <a class="nav-link" href="/selling">Penjualan</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Page</a>
+                                    <a class="nav-link" href="/purchasing">Pembelian</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Page</a>
+                                    <a class="nav-link" href="/customer">Pelanggan</a>
                                 </li>
                             </ul>
                             <ul class="navbar-nav p-2">
-                                <li class="nav-item dropdown">
+                                <!-- <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fas fa-bell cakicon-navbar" style="font-size: 28px"></i>
                                     </a>
@@ -32,7 +32,7 @@
                                         <a class="dropdown-item" href="/user/{{Auth::user()->id}}/edit"><span>Edit Profile</span></a>
                                         <a class="dropdown-item" href="#"><span>Log Out</span></a>
                                     </div>
-                                </li>
+                                </li> -->
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <img src="{{ asset ("/photo_profile") }}/{{Auth::user()->photo_profile}}" width="40" height="40" class="rounded-circle cakicon-navbar">

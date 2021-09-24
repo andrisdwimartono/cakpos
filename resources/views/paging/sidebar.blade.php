@@ -5,8 +5,8 @@
                     <strong>CR</strong>
                 </div>
 
-                <ul class="list-unstyled components">
-                @foreach ($usermenus as $um)
+                <ul class="list-unstyled components" id="cakleftmenuside">
+                <!-- @foreach ($usermenus as $um)
                 @if ($last_parent_id != $um->parent_id && $last_parent_id != 0)
                     </ul>
                   </li>
@@ -38,6 +38,6 @@
                   @endif
                 @endif
                 @php @$last_parent_id=$um->parent_id; @endphp
-                @endforeach
+                @endforeach -->
               </ul>
             </nav>

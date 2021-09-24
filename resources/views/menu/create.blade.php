@@ -42,8 +42,8 @@
       </div>
       
       <div class="form-group row">
-        <label class="col-sm-4 col-form-label" for="ct1_menu">Menu</label>
-        <div class="col-sm-6">
+        <!-- <label class="col-sm-4 col-form-label" for="ct1_menu">Menu</label> -->
+        <div class="col-sm-10">
           <table id="ctt1_menu" class="table table-striped table-bordered" style="width:100%">
             <thead>
               <tr>

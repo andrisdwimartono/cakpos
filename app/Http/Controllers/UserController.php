@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use App\Models\User;
 use App\Models\User_menu;
 use App\Models\User_role_menu;
@@ -563,6 +564,26 @@ class UserController extends Controller
                 'message' => 'Profile is updated',
                 'data' => ['id' => Auth::user()->id]
             ]);
+        }
+    }
+
+    public function getUserMenu(){
+        if(Auth::user()){
+            $user_menus = User_menu::whereUserId(Auth::user()->id)->where("is_granted", "on")->where("is_shown_at_side_menu", "on")->orderBy("mp_sequence", "ASC")->orderBy("m_sequence", "ASC")->select("menu_id" ,"mp_sequence" ,"m_sequence" ,"menu_name" ,"url" , "menu_icon", "parent_id", "is_group_menu")->get();
+            
+            if(!$user_menus){
+                abort(404, "Data not found");
+            }
+
+            $results = array(
+                "status" => 201,
+                "message" => "Data available",
+                "data" => [
+                    "user_menus" => $user_menus
+                ]
+            );
+
+            return response()->json($results);
         }
     }
 }

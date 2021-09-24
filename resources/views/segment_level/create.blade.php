@@ -13,13 +13,13 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="discount_percentage">Persen Diskon</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="discount_percentage" class="form-control" id="discount_percentage" placeholder="Enter Persen Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="discount_percentage" class="form-control cakautonumeric cakautonumeric-float" id="discount_percentage" placeholder="Enter Persen Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="discount">Nominal Diskon</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="discount" class="form-control" id="discount" placeholder="Enter Nominal Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="discount" class="form-control cakautonumeric cakautonumeric-float" id="discount" placeholder="Enter Nominal Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                     </div>

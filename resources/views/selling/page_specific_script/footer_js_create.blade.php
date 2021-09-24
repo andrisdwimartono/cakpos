@@ -17,7 +17,7 @@
 
 $(function () {
     var dt = new Date();
-    var tgl = (dt.getDate()<10?"0"+dt.getDate():dt.getDate())+"/"+((dt.getMonth()+1)<10?"0"+(dt.getMonth()+1):(dt.getMonth()+1))+"/"+dt.getFullYear()+" "+(dt.getHours()<10?"0"+dt.getHours():dt.getHours())+":"+(dt.getMinutes()<10?"0":dt.getMinutes())
+    var tgl = (dt.getDate()<10?"0"+dt.getDate():dt.getDate())+"/"+((dt.getMonth()+1)<10?"0"+(dt.getMonth()+1):(dt.getMonth()+1))+"/"+dt.getFullYear()+" "+(dt.getHours()<10?"0"+dt.getHours():dt.getHours())+":"+(dt.getMinutes()<10?"0"+dt.getMinutes():dt.getMinutes())
     @if($page_data["page_method_name"] != "View")
     $("#selling_datetime").datetimepicker({
         format:"dd/mm/yyyy HH:MM",
@@ -123,6 +123,7 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {
 
 $("#customer").on("change", function() {
     $("#customer_label").val($("#customer option:selected").text());
+    setDiscount();
 });
 
 $("#product_or_bundle").on("change", function() {
@@ -228,10 +229,8 @@ var fields = $("#quickForm").serialize();
 $.ajax({
     url: "/getoptions{{$page_data["page_data_urlname"]}}",
     type: "post",
-    data: {
-        fieldname: "paying_method",
-        _token: $("#quickForm input[name=_token]").val()
-    },
+    data: {fieldname: "paying_method", 
+    _token: $("#quickForm input[name=_token]").val()},
     success: function(data){
         var newState = new Option("", "", true, false);
         $("#paying_method").append(newState).trigger("change");
@@ -253,6 +252,8 @@ $.ajax({
         }
     }
 });
+
+
 
 $("#customer").select2({
     ajax: {
@@ -853,7 +854,7 @@ function showChildTable_ct1_selling_detail(childtablename, data){
 
 function addChildTable_ct2_payment_detail(childtablename){
     $("input[name='payment_type']").val("");
-    $("select[name='paying_method']").selectedIndex = -1;
+    $("select[name='paying_method']").val("").trigger("change");
     $("input[name='paying_method_label']").val("");
     $("input[name='paying']").val("");
     $("input[name='payment_notes']").val("");
@@ -890,11 +891,10 @@ function addChildTable_ct2_payment_detail(childtablename){
 
 function showChildTable_ct2_payment_detail(childtablename, data){
     $("input[name='payment_type']").val(data.data()[1]);
-    $("select[name='paying_method']").val(data.data()[2]);
-    $("select[name='paying_method']").select2().trigger('change');
+    $("select[name='paying_method']").val(data.data()[2]).trigger("change");
     $("input[name='paying_method_label']").val(data.data()[3]);
     $("input[name='paying']").val(data.data()[4]);
-    $("input[name='payment_notes']").val(data.data()[5]);
+    $("textarea[name='payment_notes']").val(data.data()[5]);
 
     @if($page_data["page_method_name"] != "View")
     $("#"+childtablename+" .modal-footer").html('<button type="button" id="staticBackdropUpdate_ct2_payment_detail" class="btn btn-primary">Update</button>');
@@ -909,7 +909,7 @@ function showChildTable_ct2_payment_detail(childtablename, data){
         }
         temp[3] = $("input[name='paying_method_label']").val();
         temp[4] = $("input[name='paying']").val();
-        temp[5] = $("input[name='payment_notes']").val();
+        temp[5] = $("textarea[name='payment_notes']").val();
         if( validatequickModalForm_ct2_payment_detail() ){
             data.data(temp).invalidate();
             var paying_total = getPayingTotal();
@@ -1123,6 +1123,66 @@ function setAvailableStock(){
         },
         success: function(data){
             $("#available_stock").val(data.data.stock).trigger("change");
+            cto_loading_hide();
+        },
+        error: function (err) {
+            // console.log(err);
+            if (err.status >= 400 && err.status <= 500) {
+                $.toast({
+                    text: err.status+" "+err.responseJSON.message,
+                    heading: 'Status',
+                    icon: 'warning',
+                    showHideTransition: 'fade',
+                    allowToastClose: true,
+                    hideAfter: 3000,
+                    position: 'mid-center',
+                    textAlign: 'left'
+                });
+            }
+            cto_loading_hide();
+        }
+    });
+}
+
+function setDiscount(){
+    if(!$("select[name=customer]").val()){
+        return;
+    }
+    cto_loading_show();
+    $.ajax({
+        url: "/getcustomerdiscount",
+        type: "post",
+        data: {
+            customer: $("select[name=customer]").val(),
+            _token: $("#quickForm input[name=_token]").val()
+        },
+        success: function(data){
+            //get higest discount between customer discount type()
+            if(data.data.customer.is_discount_percentage){
+                $("#selling_discount_percentage").val(data.data.customer.discount_percentage).trigger("change");
+                $.toast({
+                    text: "Customer "+data.data.customer.discount_from+" "+data.data.customer.level_name+" mendapatkan diskon sebesar "+data.data.customer.discount_percentage+"%",
+                    heading: 'Status',
+                    icon: 'success',
+                    showHideTransition: 'fade',
+                    allowToastClose: true,
+                    hideAfter: 3000,
+                    position: 'mid-center',
+                    textAlign: 'left'
+                });
+            }else{
+                $("#selling_discount_total").val(data.data.customer.discount).trigger("change");
+                $.toast({
+                    text: "Customer "+data.data.customer.discount_from+" "+data.data.customer.level_name+" mendapatkan diskon sebesar Rp "+data.data.customer.discount+"",
+                    heading: 'Status',
+                    icon: 'success',
+                    showHideTransition: 'fade',
+                    allowToastClose: true,
+                    hideAfter: 3000,
+                    position: 'mid-center',
+                    textAlign: 'left'
+                });
+            }
             cto_loading_hide();
         },
         error: function (err) {

@@ -12,7 +12,7 @@
             <th>Kode Pengadaan</th>
             <th>Status</th>
             <th>Waktu Pengadaan</th>
-            <th>Pelanggan</th>
+            <th>Supplier</th>
             <th>Total Pengadaan</th>
             <th>Total Pembayaran</th>
             <th>Total Kembalian</th>
@@ -25,7 +25,7 @@
             <th>Kode Pengadaan</th>
             <th>Status</th>
             <th>Waktu Pengadaan</th>
-            <th>Pelanggan</th>
+            <th>Supplier</th>
             <th>Total Pengadaan</th>
             <th>Total Pembayaran</th>
             <th>Total Kembalian</th>
