@@ -2,6 +2,7 @@
     <script src="{{ asset ("/assets/node_modules/@popperjs/core/dist/umd/popper.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/gijgo/js/gijgo.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/jquery-toast-plugin/dist/jquery.toast.min.js") }}"></script>
+    <script src="{{ asset ("/assets/node_modules/autonumeric/dist/autoNumeric.min.js") }}"></script>
     <script src="{{ asset ("/assets/bootstrap/dist/js/bootstrap.bundle.min.js") }}"></script>
     <script src="{{ asset ("/assets/bower_components/jquery-validation/dist/jquery.validate.min.js") }}"></script>
     <script src="{{ asset ("/assets/bower_components/select2/dist/js/select2.full.min.js") }}"></script>
@@ -14,6 +15,40 @@
     <script src="{{ asset ("/assets/cto/js/dateformatvalidation.min.js") }}"></script>
 <script>
     var editor;
+    const anElement = AutoNumeric.multiple('.cakautonumeric-float', {
+        decimalCharacter : ',',
+        digitGroupSeparator : '.',
+        minimumValue : 0,
+        decimalPlaces : 2,
+        unformatOnSubmit : true
+    });
+    console.log(anElement);
+    anObject = {};
+    for(var i = 0; i < anElement.length; i++){
+        anObject[anElement[i].domElement.name] = anElement[i];
+    }
+
+    anObject["selling_price"].settings.minimumValue = 0;
+    anObject["quantity"].settings.minimumValue = 0;
+    anObject["discount_percentage"].settings.minimumValue = 0;
+    anObject["discount_percentage"].settings.maximumValue = 100;
+    anObject["discount_total"].settings.minimumValue = 0;
+    anObject["total"].settings.minimumValue = 0;
+    anObject["selling_detail_total"].settings.minimumValue = 0;
+    anObject["selling_discount_percentage"].settings.minimumValue = 0;
+    anObject["selling_discount_percentage"].settings.maximumValue = 100;
+    anObject["selling_discount_total"].settings.minimumValue = 0;
+    anObject["selling_total"].settings.minimumValue = 0;
+    anObject["paying_total"].settings.minimumValue = 0;
+    anObject["paying"].settings.minimumValue = 0;
+    anObject["change_total"].settings.minimumValue = -10000000000000;
+
+    function reRunAutonumeric(){
+        Object.keys(anObject).forEach(function(key) {
+            anObject[key].set(anObject[key].rawValue);
+            $("#"+anObject[key].domElement.name).trigger("change");
+        });
+    }
 
 $(function () {
     var dt = new Date();
@@ -41,6 +76,19 @@ $(function () {
         submitHandler: function (form, event) {
             event.preventDefault();
             cto_loading_show();
+            if(anObject["paying_total"] < anObject["selling_total"]){
+                $.toast({
+                    text: "Total Pembayaran Kurang!!",
+                    heading: 'Status',
+                    icon: 'success',
+                    showHideTransition: 'fade',
+                    allowToastClose: true,
+                    hideAfter: 3000,
+                    position: 'mid-center',
+                    textAlign: 'left'
+                });
+                return;
+            }
             var quickForm = $("#quickForm");
             var ctct1_selling_detail = [];
             var table = $("#ctct1_selling_detail").DataTable().rows().data();
@@ -83,6 +131,7 @@ $(function () {
                                 textAlign: 'left'
                             });
                     }
+                    reRunAutonumeric();
                     cto_loading_hide();
                     @if($page_data["page_method_name"] == "Update")
                     getdata();
@@ -152,76 +201,89 @@ $("#warehouse").on("change", function() {
 });
 
 $("#selling_detail_total").on("change", function() {
-    var selling_detail_total = $("#selling_detail_total").val();
-    var selling_discount_percentage = $("#selling_discount_percentage").val();
-    $("#selling_discount_total").val(selling_detail_total*selling_discount_percentage/100);
-    var selling_discount_total = $("#selling_discount_total").val();
-    $("#selling_total").val(selling_detail_total-selling_discount_total);
+    var selling_detail_total = anObject["selling_detail_total"].rawValue;
+    var selling_discount_percentage = anObject["selling_discount_percentage"].rawValue;
+    anObject["selling_discount_total"].set(selling_detail_total*selling_discount_percentage/100);
+    var selling_discount_total = anObject["selling_discount_total"].rawValue;
+    anObject["selling_total"].set(selling_detail_total-selling_discount_total);
+    $("#selling_total").trigger("change");
 });
 
 $("#selling_discount_percentage").on("change", function() {
-    var selling_detail_total = $("#selling_detail_total").val();
-    var selling_discount_percentage = $("#selling_discount_percentage").val();
-    $("#selling_discount_total").val(selling_detail_total*selling_discount_percentage/100);
-    var selling_discount_total = $("#selling_discount_total").val();
-    $("#selling_total").val(selling_detail_total-selling_discount_total);
+    var selling_detail_total = anObject["selling_detail_total"].rawValue;
+    var selling_discount_percentage = anObject["selling_discount_percentage"].rawValue;
+    anObject["selling_discount_total"].set(selling_detail_total*selling_discount_percentage/100);
+    var selling_discount_total = anObject["selling_discount_total"].rawValue;
+    anObject["selling_total"].set(selling_detail_total-selling_discount_total);
+    $("#selling_total").trigger("change");
 });
 
 $("#selling_discount_total").on("change", function() {
-    var selling_detail_total = $("#selling_detail_total").val();
-    var selling_discount_total = $("#selling_discount_total").val();
-    $("#selling_discount_percentage").val(selling_discount_total*100/selling_detail_total);
-    var selling_discount_total = $("#selling_discount_total").val();
-    $("#selling_total").val(selling_detail_total-selling_discount_total);
+    var selling_detail_total = anObject["selling_detail_total"].rawValue;
+    var selling_discount_total = anObject["selling_discount_total"].rawValue;
+    anObject["selling_discount_percentage"].set(selling_discount_total*100/selling_detail_total);
+    var selling_discount_total = anObject["selling_discount_total"].rawValue;
+    anObject["selling_total"].set(selling_detail_total-selling_discount_total);
 });
 
 $("#quantity").on("change", function() {
-    var quantity = $("#quantity").val();
-    var selling_price = $("#selling_price").val();
-    var discount_percentage = $("#discount_percentage").val();
-    $("#discount_total").val(selling_price*discount_percentage/100);
-    var discount_total = $("#discount_total").val();
-    $("#total").val((selling_price-discount_total)*quantity);
+    var quantity = anObject["quantity"].rawValue;
+    var selling_price = anObject["selling_price"].rawValue;
+    var discount_percentage = anObject["discount_percentage"].rawValue;
+    anObject["discount_total"].set(selling_price*discount_percentage/100);
+    var discount_total = anObject["discount_total"].rawValue;
+    anObject["total"].set((selling_price-discount_total)*quantity);
 });
 
 $("#selling_price").on("change", function() {
-    var quantity = $("#quantity").val();
-    var selling_price = $("#selling_price").val();
-    var discount_percentage = $("#discount_percentage").val();
-    $("#discount_total").val(selling_price*discount_percentage/100);
-    var discount_total = $("#discount_total").val();
-    $("#total").val((selling_price-discount_total)*quantity);
-    $("#paying_total").trigger("change");
+    var quantity = anObject["quantity"].rawValue;
+    var selling_price = anObject["selling_price"].rawValue;
+    var discount_percentage = anObject["discount_percentage"].rawValue;
+    anObject["discount_total"].set(selling_price*discount_percentage/100);
+    var discount_total = anObject["discount_total"].rawValue;
+    anObject["total"].set((selling_price-discount_total)*quantity);
 });
 
 $("#discount_percentage").on("change", function() {
-    var quantity = $("#quantity").val();
-    var selling_price = $("#selling_price").val();
-    var discount_percentage = $("#discount_percentage").val();
-    $("#discount_total").val(selling_price*discount_percentage/100);
-    var discount_total = $("#discount_total").val();
-    $("#total").val((selling_price-discount_total)*quantity);
-    $("#paying_total").trigger("change");
+    var quantity = anObject["quantity"].rawValue;
+    var selling_price = anObject["selling_price"].rawValue;
+    var discount_percentage = anObject["discount_percentage"].rawValue;
+    anObject["discount_total"].set(selling_price*discount_percentage/100);
+    var discount_total = anObject["discount_total"].rawValue;
+    anObject["total"].set((selling_price-discount_total)*quantity);
 });
 
 $("#discount_total").on("change", function() {
-    var quantity = $("#quantity").val();
-    var selling_price = $("#selling_price").val();
-    var discount_total = $("#discount_total").val();
-    $("#discount_percentage").val(discount_total*100/selling_price);
-    var discount_total = $("#discount_total").val();
-    $("#total").val((selling_price-discount_total)*quantity);
-    $("#paying_total").trigger("change");
+    var quantity = anObject["quantity"].rawValue;
+    var selling_price = anObject["selling_price"].rawValue;
+    var discount_total = anObject["discount_total"].rawValue;
+    anObject["discount_percentage"].set(discount_total*100/selling_price);
+    var discount_total = anObject["discount_total"].rawValue;
+    anObject["total"].set((selling_price-discount_total)*quantity);
 });
 
 $("#paying_method").on("change", function() {
     $("#paying_method_label").val($("#paying_method option:selected").text());
 });
 
+$("#selling_total").on("change", function() {
+    var selling_total = anObject["selling_total"].rawValue;
+    var paying_total = anObject["paying_total"].rawValue;
+    try{
+        anObject["change_total"].set(paying_total-selling_total);
+    }catch(err){
+        
+    }
+});
+
 $("#paying_total").on("change", function() {
-    var selling_total = $("#selling_total").val();
-    var paying_total = $("#paying_total").val();
-    $("#change_total").val(paying_total-selling_total);
+    var selling_total = anObject["selling_total"].rawValue;
+    var paying_total = anObject["paying_total"].rawValue;
+    try{
+        anObject["change_total"].set(paying_total-selling_total);
+    }catch(err){
+        
+    }
 });
 
 var fields = $("#quickForm").serialize();
@@ -349,29 +411,22 @@ $("#quickForm").validate({
             required: true
         },
         selling_detail_total :{
-            required: true,
-            number: true
+            required: true
         },
         selling_discount_percentage :{
-            required: true,
-            number: true,
-            max:100
+            required: true
         },
         selling_discount_total :{
-            required: true,
-            number: true
+            required: true
         },
         selling_total :{
-            required: true,
-            number: true
+            required: true
         },
         paying_total :{
-            required: true,
-            number: true
+            required: true
         },
         change_total :{
-            required: true,
-            number: true
+            required: true
         },
     },
     messages: {
@@ -387,28 +442,21 @@ $("#quickForm").validate({
         },
         selling_detail_total :{
             required: "Total Detail Penjualan harus diisi!!",
-            number: "Total Detail Penjualan harus berupa angka!!"
         },
         selling_discount_percentage :{
             required: "Persen Diskon Penjualan harus diisi!!",
-            number: "Persen Diskon Penjualan harus berupa angka!!",
-            max: "Persen Diskon Penjualan maksimal 100!!"
         },
         selling_discount_total :{
             required: "Nominal Diskon Penjualan harus diisi!!",
-            number: "Nominal Diskon Penjualan harus berupa angka!!"
         },
         selling_total :{
             required: "Total Penjualan harus diisi!!",
-            number: "Total Penjualan harus berupa angka!!"
         },
         paying_total :{
             required: "Total Pembayaran harus diisi!!",
-            number: "Total Pembayaran harus berupa angka!!"
         },
         change_total :{
             required: "Total Kembalian harus diisi!!",
-            number: "Total Kembalian harus berupa angka!!"
         },
     },
     errorElement: "span",
@@ -433,23 +481,19 @@ $("#quickModalForm_ct1_selling_detail").validate({
             required: true
         },
         selling_price :{
-            required: true,
-            number: true
+            required: true
         },
         quantity :{
-            required: true,
-            number: true
+            required: true
         },
         discount_percentage :{
-            number: true,
-            max:100
+            required: true
         },
         discount_total :{
-            number: true
+            required: true
         },
         total :{
-            required: true,
-            number: true
+            required: true
         },
         warehouse :{
             required: true
@@ -464,22 +508,18 @@ $("#quickModalForm_ct1_selling_detail").validate({
         },
         selling_price :{
             required: "Harga Jual harus diisi!!",
-            number: "Harga Jual harus berupa angka!!"
         },
         quantity :{
             required: "Kuantitas harus diisi!!",
-            number: "Kuantitas harus berupa angka!!"
         },
         discount_percentage :{
-            number: "Persen Diskon harus berupa angka!!",
-            max: "Persen Diskon maksimal 100!!"
+            required: "Persen diskon harus diisi!!",
         },
         discount_total :{
-            number: "Nominal Diskon harus berupa angka!!"
+            required: "Nominal Diskon harus diisi!!",
         },
         total :{
             required: "Total harus diisi!!",
-            number: "Total harus berupa angka!!"
         },
         warehouse :{
             required: "Gudang harus diisi!!"
@@ -508,7 +548,6 @@ $("#quickModalForm_ct1_selling_detail").validate({
         },
         paying :{
             required: true,
-            number: true
         },
     },
     messages: {
@@ -520,7 +559,6 @@ $("#quickModalForm_ct1_selling_detail").validate({
         },
         paying :{
             required: "Nominal Bayar harus diisi!!",
-            number: "Nominal Bayar harus berupa angka!!"
         },
     },
     errorElement: "span",
@@ -542,6 +580,15 @@ $(document).ready(function() {
         @if($page_data["page_method_name"] != "View")
         rowReorder: true,
         @endif
+        aoColumnDefs: [{
+            aTargets: [8, 9, 10, 11, 12],
+            mRender: function (data, type, full){
+                var formattedvalue = parseFloat(data).toFixed(2);
+                formattedvalue = formattedvalue.toString().replace(".", ",");
+                formattedvalue = formattedvalue.toString().replace(/(\d+)(\d{3})/, '$1'+'.'+'$2');
+                return formattedvalue;
+            }
+        }],
         //add button
         dom: "Bfrtip" @if($page_data["page_method_name"] != "View") ,
         buttons: [
@@ -595,6 +642,15 @@ $(document).ready(function() {
         rowReorder: true,
         @endif
         //add button
+        aoColumnDefs: [{
+            aTargets: [4],
+            mRender: function (data, type, full){
+                var formattedvalue = parseFloat(data).toFixed(2);
+                formattedvalue = formattedvalue.toString().replace(".", ",");
+                formattedvalue = formattedvalue.toString().replace(/(\d+)(\d{3})/, '$1'+'.'+'$2');
+                return formattedvalue;
+            }
+        }],
         dom: "Bfrtip" @if($page_data["page_method_name"] != "View") ,
         buttons: [
             {
@@ -678,7 +734,11 @@ function getdata(){
                     if(["is_paynow"].includes(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i])){
                         $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").prop("checked", data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
                     }else{
-                        $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
+                        try{
+                            anObject[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]].set(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
+                        }catch(err){
+                            $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
+                        }
                         $("textarea[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
                         if(["ewfsdfsafdsafasdfasdferad"].includes(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i])){
                             if(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]] != null){
@@ -774,11 +834,11 @@ function addChildTable_ct1_selling_detail(childtablename){
         var product_label = $("input[name='product_label']").val();
         var bundle = $("input[name='bundle']").val();
         var bundle_label = $("input[name='bundle_label']").val();
-        var selling_price = $("input[name='selling_price']").val();
-        var quantity = $("input[name='quantity']").val();
-        var discount_percentage = $("input[name='discount_percentage']").val();
-        var discount_total = $("input[name='discount_total']").val();
-        var total = $("input[name='total']").val();
+        var selling_price = anObject["selling_price"].rawValue;
+        var quantity = anObject["quantity"].rawValue;
+        var discount_percentage = anObject["discount_percentage"].rawValue;
+        var discount_total = anObject["discount_total"].rawValue;
+        var total = anObject["total"].rawValue;
         var warehouse = $("select[name='warehouse'] option").filter(':selected').val();
         if(!warehouse){
             warehouse = null;
@@ -790,7 +850,9 @@ function addChildTable_ct1_selling_detail(childtablename){
         if(validatequickModalForm_ct1_selling_detail()){
             if(dttb.row.add(child_table_data).draw( false )){
                 var selling_detail_total = getTotalPrice();
-                $("#selling_detail_total").val(selling_detail_total).trigger('change');
+                anObject["selling_detail_total"].set(selling_detail_total);
+                $("#selling_detail_total").trigger("change");
+                $("#paying_total").trigger("change");
                 $('#staticBackdrop_ct1_selling_detail').modal('hide');
             }
         }
@@ -807,11 +869,11 @@ function showChildTable_ct1_selling_detail(childtablename, data){
     $("input[name='product_label']").val(data.data()[5]);
     $("input[name='bundle']").val(data.data()[6]);
     $("input[name='bundle_label']").val(data.data()[7]);
-    $("input[name='selling_price']").val(data.data()[8]);
-    $("input[name='quantity']").val(data.data()[9]);
-    $("input[name='discount_percentage']").val(data.data()[10]);
-    $("input[name='discount_total']").val(data.data()[11]);
-    $("input[name='total']").val(data.data()[12]);
+    anObject["selling_price"].set(data.data()[8]);
+    anObject["quantity"].set(data.data()[9]);
+    anObject["discount_percentage"].set(data.data()[10]);
+    anObject["discount_total"].set(data.data()[11]);
+    anObject["total"].set(data.data()[12]);
     $("select[name='warehouse']").empty();
     var newState = new Option(data.data()[14], data.data()[13], true, false);
     $("#warehouse").append(newState).trigger('change');
@@ -833,11 +895,11 @@ function showChildTable_ct1_selling_detail(childtablename, data){
         temp[5] = $("input[name='product_label']").val();
         temp[6] = $("input[name='bundle']").val();
         temp[7] = $("input[name='bundle_label']").val();
-        temp[8] = $("input[name='selling_price']").val();
-        temp[9] = $("input[name='quantity']").val();
-        temp[10] = $("input[name='discount_percentage']").val();
-        temp[11] = $("input[name='discount_total']").val();
-        temp[12] = $("input[name='total']").val();
+        temp[8] = anObject["selling_price"].rawValue;
+        temp[9] = anObject["quantity"].rawValue;
+        temp[10] = anObject["discount_percentage"].rawValue;
+        temp[11] = anObject["discount_total"].rawValue;
+        temp[12] = anObject["total"].rawValue;
         temp[13] = $("select[name='warehouse'] option").filter(':selected').val();
         if(!warehouse){
             warehouse = null;
@@ -846,7 +908,9 @@ function showChildTable_ct1_selling_detail(childtablename, data){
         if( validatequickModalForm_ct1_selling_detail() ){
             data.data(temp).invalidate();
             var selling_detail_total = getTotalPrice();
-            $("#selling_detail_total").val(selling_detail_total).trigger('change');
+            anObject["selling_detail_total"].set(selling_detail_total);
+            $("#selling_detail_total").trigger("change");
+            $("#paying_total").trigger("change");
             $("#staticBackdrop_ct1_selling_detail").modal("hide");
         }
     });
@@ -874,7 +938,7 @@ function addChildTable_ct2_payment_detail(childtablename){
             paying_method = null;
         }
         var paying_method_label = $("input[name='paying_method_label']").val();
-        var paying = $("input[name='paying']").val();
+        var paying = anObject["paying"].rawValue;
         var payment_notes = $("textarea[name='payment_notes']").val();
 
         var child_table_data = [no_seq+1, payment_type, paying_method, paying_method_label, paying, payment_notes, '<div class="row-show"><i class="fa fa-eye" style="color:blue;cursor: pointer;"></i></div>     <div class="row-delete"><i class="fa fa-trash" style="color:red;cursor: pointer;"></i></div>', null];
@@ -882,7 +946,8 @@ function addChildTable_ct2_payment_detail(childtablename){
         if(validatequickModalForm_ct2_payment_detail()){
             if(dttb.row.add(child_table_data).draw( false )){
                 var paying_total = getPayingTotal();
-                $("#paying_total").val(paying_total).trigger('change');
+                anObject["paying_total"].set(paying_total);
+                $("#paying_total").trigger("change");
                 $('#staticBackdrop_ct2_payment_detail').modal('hide');
             }
         }
@@ -893,7 +958,7 @@ function showChildTable_ct2_payment_detail(childtablename, data){
     $("input[name='payment_type']").val(data.data()[1]);
     $("select[name='paying_method']").val(data.data()[2]).trigger("change");
     $("input[name='paying_method_label']").val(data.data()[3]);
-    $("input[name='paying']").val(data.data()[4]);
+    anObject["paying"].set(data.data()[4]);
     $("textarea[name='payment_notes']").val(data.data()[5]);
 
     @if($page_data["page_method_name"] != "View")
@@ -908,12 +973,13 @@ function showChildTable_ct2_payment_detail(childtablename, data){
             paying_method = null;
         }
         temp[3] = $("input[name='paying_method_label']").val();
-        temp[4] = $("input[name='paying']").val();
+        temp[4] = anObject["paying"].rawValue;
         temp[5] = $("textarea[name='payment_notes']").val();
         if( validatequickModalForm_ct2_payment_detail() ){
             data.data(temp).invalidate();
             var paying_total = getPayingTotal();
-            $("#paying_total").val(paying_total).trigger('change');
+            anObject["paying_total"].set(paying_total);
+            $("#paying_total").trigger("change");
             $("#staticBackdrop_ct2_payment_detail").modal("hide");
         }
     });
@@ -931,22 +997,18 @@ function validatequickModalForm_ct1_selling_detail(){
         },
         selling_price :{
             required: true,
-            number: true
         },
         quantity :{
             required: true,
-            number: true
         },
         discount_percentage :{
-            number: true,
-            max:100
+            required: true,
         },
         discount_total :{
-            number: true
+            required: true,
         },
         total :{
             required: true,
-            number: true
         },
         warehouse :{
             required: true
@@ -960,23 +1022,19 @@ function validatequickModalForm_ct1_selling_detail(){
             required: "Apakah Bundle? harus diisi!!"
         },
         selling_price :{
-            required: "Harga Jual harus diisi!!",
-            number: "Harga Jual harus berupa angka!!"
+            required: "Harga Jual harus diisi!!"
         },
         quantity :{
-            required: "Kuantitas harus diisi!!",
-            number: "Kuantitas harus berupa angka!!"
+            required: "Kuantitas harus diisi!!"
         },
         discount_percentage :{
-            number: "Persen Diskon harus berupa angka!!",
-            max: "Persen Diskon maksimal 100!!"
+            required: "Persen Diskon harus diisi!!",
         },
         discount_total :{
-            number: "Nominal Diskon harus berupa angka!!"
+            required: "Total Diskon harus diisi!!"
         },
         total :{
-            required: "Total harus diisi!!",
-            number: "Total harus berupa angka!!"
+            required: "Total harus diisi!!"
         },
         warehouse :{
             required: "Gudang harus diisi!!"
@@ -1013,8 +1071,7 @@ function validatequickModalForm_ct2_payment_detail(){
             required: true
         },
         paying :{
-            required: true,
-            number: true
+            required: true
         },
     },
     messages: {
@@ -1025,8 +1082,7 @@ function validatequickModalForm_ct2_payment_detail(){
             required: "Metode Pembayaran harus diisi!!"
         },
         paying :{
-            required: "Nominal Bayar harus diisi!!",
-            number: "Nominal Bayar harus berupa angka!!"
+            required: "Nominal Bayar harus diisi!!"
         },
     },
     errorElement: "span",
@@ -1083,8 +1139,8 @@ function setSellingPrice(id, type){
             if($("#quantity").val() == "" || $("#quantity").val() == 0){
                 $("#quantity").val(1);
             }
-            $("#selling_price").val(data.data.product.selling_price).trigger("change");
-            $("#discount_percentage").val(data.data.product.discount_percentage).trigger("change");
+            anObject["selling_price"].set(data.data.product.selling_price);
+            anObject["discount_percentage"].set(data.data.product.discount_percentage);
             cto_loading_hide();
         },
         error: function (err) {
@@ -1122,7 +1178,7 @@ function setAvailableStock(){
             _token: $("#quickForm input[name=_token]").val()
         },
         success: function(data){
-            $("#available_stock").val(data.data.stock).trigger("change");
+            anObject["available_stock"].set(data.data.stock);
             cto_loading_hide();
         },
         error: function (err) {
@@ -1159,7 +1215,7 @@ function setDiscount(){
         success: function(data){
             //get higest discount between customer discount type()
             if(data.data.customer.is_discount_percentage){
-                $("#selling_discount_percentage").val(data.data.customer.discount_percentage).trigger("change");
+                anObject["selling_discount_percentage"].set(data.data.customer.discount_percentage);
                 $.toast({
                     text: "Customer "+data.data.customer.discount_from+" "+data.data.customer.level_name+" mendapatkan diskon sebesar "+data.data.customer.discount_percentage+"%",
                     heading: 'Status',
@@ -1171,7 +1227,7 @@ function setDiscount(){
                     textAlign: 'left'
                 });
             }else{
-                $("#selling_discount_total").val(data.data.customer.discount).trigger("change");
+                anObject["selling_discount_total"].val(data.data.customer.discount);
                 $.toast({
                     text: "Customer "+data.data.customer.discount_from+" "+data.data.customer.level_name+" mendapatkan diskon sebesar Rp "+data.data.customer.discount+"",
                     heading: 'Status',

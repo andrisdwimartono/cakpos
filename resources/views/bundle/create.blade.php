@@ -45,25 +45,25 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="total_price">Harga Jual Paket</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="total_price" class="form-control" id="total_price" placeholder="Enter Harga Jual Paket" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="total_price" class="form-control cakautonumeric cakautonumeric-float" id="total_price" value="0" placeholder="Enter Harga Jual Paket" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="discount_percentage_bundle">Persen Diskon Paket</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="discount_percentage_bundle" class="form-control" id="discount_percentage_bundle" placeholder="Enter Persen Diskon Paket" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="discount_percentage_bundle" class="form-control cakautonumeric cakautonumeric-float" id="discount_percentage_bundle" value="0" placeholder="Enter Persen Diskon Paket" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="discount_total_bundle">Nominal Diskon</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="discount_total_bundle" class="form-control" id="discount_total_bundle" placeholder="Enter Nominal Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="discount_total_bundle" class="form-control cakautonumeric cakautonumeric-float" id="discount_total_bundle" value="0" placeholder="Enter Nominal Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="total_bundle">Total</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="total_bundle" class="form-control" id="total_bundle" placeholder="Enter Total" readonly>
+                                    <input type="text" name="total_bundle" class="form-control cakautonumeric cakautonumeric-float" id="total_bundle" value="0" placeholder="Enter Total" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                     </div>
@@ -103,31 +103,31 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="quantity">Kuantitas</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="quantity" class="form-control" id="quantity" placeholder="Enter Kuantitas" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                        <input type="text" name="quantity" value="0" class="form-control cakautonumeric cakautonumeric-float" id="quantity" placeholder="Enter Kuantitas" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="selling_price">Harga Jual</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="selling_price" class="form-control" id="selling_price" placeholder="Enter Harga Jual" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                        <input type="text" name="selling_price" value="0" class="form-control cakautonumeric cakautonumeric-float" id="selling_price" placeholder="Enter Harga Jual" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="discount_percentage">Persen Diskon</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="discount_percentage" class="form-control" id="discount_percentage" placeholder="Enter Persen Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                        <input type="text" name="discount_percentage" value="0" class="form-control cakautonumeric cakautonumeric-float" id="discount_percentage" placeholder="Enter Persen Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="discount_total">Nominal Diskon</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="discount_total" class="form-control" id="discount_total" placeholder="Enter Nominal Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                        <input type="text" name="discount_total" value="0" class="form-control cakautonumeric cakautonumeric-float" id="discount_total" placeholder="Enter Nominal Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="total">Total</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="total" class="form-control" id="total" placeholder="Enter Total" readonly>
+                                        <input type="text" name="total" value="0" class="form-control cakautonumeric cakautonumeric-float" id="total" placeholder="Enter Total" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                             </form>

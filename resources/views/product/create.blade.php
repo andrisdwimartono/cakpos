@@ -50,25 +50,25 @@
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="buying_price">Harga Beli</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="buying_price" class="form-control" id="buying_price" placeholder="Enter Harga Beli" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="buying_price" class="form-control cakautonumeric cakautonumeric-float" id="buying_price" value="0" placeholder="Enter Harga Beli" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="selling_price">Harga Jual</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="selling_price" class="form-control" id="selling_price" placeholder="Enter Harga Jual" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="selling_price" class="form-control cakautonumeric cakautonumeric-float" id="selling_price" value="0" placeholder="Enter Harga Jual" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="discount_percentage">Persen Diskon</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="discount_percentage" class="form-control" id="discount_percentage" placeholder="Enter Persen Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="discount_percentage" class="form-control cakautonumeric cakautonumeric-float" id="discount_percentage" value="0" placeholder="Enter Persen Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="discount">Nominal Diskon</label>
                                 <div class="col-sm-6">
-                                    <input type="number" name="discount" class="form-control" id="discount" placeholder="Enter Nominal Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                    <input type="text" name="discount" class="form-control cakautonumeric cakautonumeric-float" id="discount" value="0" placeholder="Enter Nominal Diskon" @if($page_data["page_method_name"] == "View") readonly @endif>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -105,7 +105,7 @@
                     </div>
                     @if($page_data["page_method_name"] != "View")
                     <div class="form-group row">
-                        <div class="col-sm-10 offset-sm-9">
+                        <div class="col-sm-9 offset-sm-9">
                         <button type="submit" class="btn btn-primary" @if($page_data["page_method_name"] == "View") readonly @endif>Submit</button>
                         </div>
                     </div>
@@ -139,7 +139,7 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="stock">Stok</label>
                                     <div class="col-sm-6">
-                                        <input type="number" name="stock" class="form-control" id="stock" placeholder="Enter Stok" @if($page_data["page_method_name"] == "View") readonly @endif>
+                                        <input type="text" name="stock" value="0" class="form-control cakautonumeric cakautonumeric-float" id="stock" placeholder="Enter Stok" @if($page_data["page_method_name"] == "View") readonly @endif>
                                     </div>
                                 </div>
                             </form>

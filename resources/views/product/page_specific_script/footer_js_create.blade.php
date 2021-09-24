@@ -2,6 +2,7 @@
     <script src="{{ asset ("/assets/node_modules/@popperjs/core/dist/umd/popper.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/gijgo/js/gijgo.min.js") }}"></script>
     <script src="{{ asset ("/assets/node_modules/jquery-toast-plugin/dist/jquery.toast.min.js") }}"></script>
+    <script src="{{ asset ("/assets/node_modules/autonumeric/dist/autoNumeric.min.js") }}"></script>
     <script src="{{ asset ("/assets/bootstrap/dist/js/bootstrap.bundle.min.js") }}"></script>
     <script src="{{ asset ("/assets/bower_components/jquery-validation/dist/jquery.validate.min.js") }}"></script>
     <script src="{{ asset ("/assets/bower_components/select2/dist/js/select2.full.min.js") }}"></script>
@@ -14,6 +15,33 @@
     <script src="{{ asset ("/assets/cto/js/dateformatvalidation.min.js") }}"></script>
 <script>
     var editor;
+    const anElement = AutoNumeric.multiple('.cakautonumeric-float', {
+        decimalCharacter : ',',
+        digitGroupSeparator : '.',
+        minimumValue : 0,
+        decimalPlaces : 2,
+        unformatOnSubmit : true
+    });
+
+    anObject = {};
+    for(var i = 0; i < anElement.length; i++){
+        anObject[anElement[i].domElement.name] = anElement[i];
+    }
+
+    anObject["buying_price"].settings.minimumValue = 0;
+    anObject["selling_price"].settings.minimumValue = 0;
+    anObject["discount_percentage"].settings.minimumValue = 0;
+    anObject["discount_percentage"].settings.maximumValue = 100;
+    anObject["discount"].settings.minimumValue = 0;
+    anObject["stock"].settings.minimumValue = 0;
+
+    function reRunAutonumeric(){
+        Object.keys(anObject).forEach(function(key) {
+            anObject[key].set(anObject[key].rawValue);
+            $("#"+anObject[key].domElement.name).trigger("change");
+        });
+    }
+
 
 $(function () {
 
@@ -55,6 +83,7 @@ $(function () {
                                 textAlign: 'left'
                             });
                     }
+                    reRunAutonumeric();
                     cto_loading_hide();
                     @if($page_data["page_method_name"] == "Update")
                     getdata();
@@ -80,7 +109,7 @@ $(function () {
 });
 
 $("select").select2({
-    placeholder: "",
+    placeholder: "Pilih satu",
     allowClear: true,
     theme: "bootstrap4" @if($page_data["page_method_name"] == "View"),
     disabled: true @endif
@@ -90,10 +119,6 @@ $.fn.modal.Constructor.prototype._enforceFocus = function() {
 
 };
 
-$(".select2bs4staticBackdrop").select2({
-    placeholder: "",
-    allowClear: true
-});
 $("#uom").on("change", function() {
     $("#uom_label").val($("#uom option:selected").text());
 });
@@ -111,21 +136,19 @@ $("#warehouse").on("change", function() {
 });
 
 $("#selling_price").on("change", function() {
-    var selling_price       = $("#selling_price").val();
-    var discount_percentage = $("#discount_percentage").val();
-    $("#discount").val(selling_price*discount_percentage/100);
+    anObject["discount"].set(anObject["discount_percentage"].rawValue*anObject["selling_price"].rawValue/100);
 });
 
 $("#discount_percentage").on("change", function() {
-    var selling_price       = $("#selling_price").val();
-    var discount_percentage = $("#discount_percentage").val();
-    $("#discount").val(selling_price*discount_percentage/100);
+    anObject["discount"].set(anObject["discount_percentage"].rawValue*anObject["selling_price"].rawValue/100);
 });
 
 $("#discount").on("change", function() {
-    var selling_price       = $("#selling_price").val();
-    var discount            = $("#discount").val();
-    $("#discount_percentage").val(discount/selling_price*100);
+    try{
+        anObject["discount_percentage"].set(anObject["discount"].rawValue/anObject["selling_price"].rawValue*100);
+    }catch(err){
+        
+    }
 });
 
 var fields = $("#quickForm").serialize();
@@ -246,21 +269,16 @@ $("#quickForm").validate({
             maxlength:255
         },
         buying_price :{
-            required: true,
-            number: true
+            required: true
         },
         selling_price :{
-            required: true,
-            number: true
+            required: true
         },
         discount_percentage :{
-            required: true,
-            number: true,
-            max:100
+            required: true
         },
         discount :{
-            required: true,
-            number: true
+            required: true
         },
         status :{
             required: true
@@ -276,21 +294,16 @@ $("#quickForm").validate({
             maxlength: "Kode Produksi maksimal 255 karakter!!"
         },
         buying_price :{
-            required: "Harga Beli harus diisi!!",
-            number: "Harga Beli harus berupa angka!!"
+            required: "Harga Beli harus diisi!!"
         },
         selling_price :{
-            required: "Harga Jual harus diisi!!",
-            number: "Harga Jual harus berupa angka!!"
+            required: "Harga Jual harus diisi!!"
         },
         discount_percentage :{
-            required: "Persen Diskon harus diisi!!",
-            number: "Persen Diskon harus berupa angka!!",
-            max: "Persen Diskon maksimal 100!!"
+            required: "Persen Diskon harus diisi!!"
         },
         discount :{
-            required: "Nominal Diskon harus diisi!!",
-            number: "Nominal Diskon harus berupa angka!!"
+            required: "Nominal Diskon harus diisi!!"
         },
         status :{
             required: "Status harus diisi!!"
@@ -315,8 +328,7 @@ $("#quickModalForm_product_stock").validate({
             required: true
         },
         stock :{
-            required: true,
-            number: true
+            required: true
         },
     },
     messages: {
@@ -324,8 +336,7 @@ $("#quickModalForm_product_stock").validate({
             required: "Gudang harus diisi!!"
         },
         stock :{
-            required: "Stok harus diisi!!",
-            number: "Stok harus berupa angka!!"
+            required: "Stok harus diisi!!"
         },
     },
     errorElement: "span",
@@ -347,6 +358,15 @@ $(document).ready(function() {
         @if($page_data["page_method_name"] != "View")
         rowReorder: true,
         @endif
+        aoColumnDefs: [{
+            aTargets: [3],
+            mRender: function (data, type, full){
+                var formattedvalue = parseFloat(data).toFixed(2);
+                formattedvalue = formattedvalue.toString().replace(".", ",");
+                formattedvalue = formattedvalue.toString().replace(/(\d+)(\d{3})/, '$1'+'.'+'$2');
+                return formattedvalue;
+            }
+        }],
         //add button
         dom: "Bfrtip" @if($page_data["page_method_name"] != "View") ,
         buttons: [
@@ -413,7 +433,11 @@ function getdata(){
                     if(["ewfsdfsafdsafasdfasdferad"].includes(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i])){
                         $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").prop("checked", data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
                     }else{
+                    try{
+                        anObject[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]].set(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
+                    }catch(err){
                         $("input[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
+                    }
                         $("textarea[name="+Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]+"]").val(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]]);
                         if(["product_photo"].includes(Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i])){
                             if(data.data.{{$page_data["page_data_urlname"]}}[Object.keys(data.data.{{$page_data["page_data_urlname"]}})[i]] != null){
@@ -481,7 +505,7 @@ function addChildTable_product_stock(childtablename){
             warehouse = null;
         }
         var warehouse_label = $("input[name='warehouse_label']").val();
-        var stock = $("input[name='stock']").val();
+        var stock = anObject["stock"].rawValue;
 
         var child_table_data = [no_seq+1, warehouse, warehouse_label, stock, '<div class="row-show"><i class="fa fa-eye" style="color:blue;cursor: pointer;"></i></div>     <div class="row-delete"><i class="fa fa-trash" style="color:red;cursor: pointer;"></i></div>', null];
 
@@ -498,7 +522,7 @@ function showChildTable_product_stock(childtablename, data){
     var newState = new Option(data.data()[2], data.data()[1], true, false);
     $("#warehouse").append(newState).trigger('change');
     $("input[name='warehouse_label']").val(data.data()[2]);
-    $("input[name='stock']").val(data.data()[3]);
+    anObject["stock"].set(data.data()[3]);
 
     @if($page_data["page_method_name"] != "View")
     $("#"+childtablename+" .modal-footer").html('<button type="button" id="staticBackdropUpdate_product_stock" class="btn btn-primary">Update</button>');
@@ -506,12 +530,12 @@ function showChildTable_product_stock(childtablename, data){
 
     $("#staticBackdropUpdate_product_stock").click(function(e){
         var temp = data.data();
-        temp[2] = $("select[name='warehouse'] option").filter(':selected').val();
+        temp[1] = $("select[name='warehouse'] option").filter(':selected').val();
         if(!warehouse){
             warehouse = null;
         }
-        temp[3] = $("input[name='warehouse_label']").val();
-        temp[4] = $("input[name='stock']").val();
+        temp[2] = $("input[name='warehouse_label']").val();
+        temp[3] = anObject["stock"].rawValue;
         if( validatequickModalForm_product_stock() ){
             data.data(temp).invalidate();
             $("#staticBackdrop_product_stock").modal("hide");
@@ -526,8 +550,7 @@ function validatequickModalForm_product_stock(){
             required: true
         },
         stock :{
-            required: true,
-            number: true
+            required: true
         },
     },
     messages: {
@@ -535,8 +558,7 @@ function validatequickModalForm_product_stock(){
             required: "Gudang harus diisi!!"
         },
         stock :{
-            required: "Stok harus diisi!!",
-            number: "Stok harus berupa angka!!"
+            required: "Stok harus diisi!!"
         },
     },
     errorElement: "span",
