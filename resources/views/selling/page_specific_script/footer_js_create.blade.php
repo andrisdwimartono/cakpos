@@ -10,6 +10,7 @@
     <script src="{{ asset ("/assets/datatables/js/dataTables.bootstrap4.min.js") }}"></script>
     <script src="{{ asset ("/assets/datatables/js/dataTables.rowReorder.min.js") }}"></script>
     <script src="{{ asset ("/assets/datatables/js/dataTables.buttons.min.js") }}"></script>
+    <script src="{{ asset ("/assets/qrcode-reader/js/qrcode-reader.min.js") }}"></script>
     <script src="{{ asset ("/assets/cto/js/cakrudtemplate.js") }}"></script>
     <script src="{{ asset ("/assets/cto/js/cto_loadinganimation.min.js") }}"></script>
     <script src="{{ asset ("/assets/cto/js/dateformatvalidation.min.js") }}"></script>
@@ -22,7 +23,7 @@
         decimalPlaces : 2,
         unformatOnSubmit : true
     });
-    console.log(anElement);
+    
     anObject = {};
     for(var i = 0; i < anElement.length; i++){
         anObject[anElement[i].domElement.name] = anElement[i];
@@ -51,6 +52,85 @@
     }
 
 $(function () {
+    $.qrCodeReader.jsQRpath = "{{ asset ("/assets/jsQR/js/jsQR.min.js") }}";
+    $.qrCodeReader.beepPath = "{{ asset ("/assets/jsQR/sound/beep-08b.mp3") }}";
+    $("#openreader-single2").qrCodeReader({callback: function(code) {
+        if (code) {
+            var id_customer = code;
+            if(!id_customer.split("/")[2]){
+                return;
+            }
+            $.ajax({
+                url: "/getdatacustomer",
+                type: "post",
+                data: {
+                    id: id_customer.split("/")[2],
+                    _token: $("#quickForm input[name=_token]").val()
+                },
+                success: function(data){
+                    $("select[name='customer']").empty();
+                    var newState = new Option(data.data.customer.customer_name, data.data.customer.id, true, false);
+                    $("#customer").append(newState).trigger('change');
+                    $("input[name='customer_label']").val(data.data.customer.customer_name);
+                    cto_loading_hide();
+                },
+                error: function (err) {
+                    // console.log(err);
+                    if (err.status >= 400 && err.status <= 500) {
+                        $.toast({
+                            text: err.status+" "+err.responseJSON.message,
+                            heading: 'Status',
+                            icon: 'warning',
+                            showHideTransition: 'fade',
+                            allowToastClose: true,
+                            hideAfter: 3000,
+                            position: 'mid-center',
+                            textAlign: 'left'
+                        });
+                    }
+                    cto_loading_hide();
+                }
+            });
+        }  
+    }}).off("click.qrCodeReader").on("click", function(){
+      var qrcode = $("#single2").val().trim();
+      if (qrcode) {
+        $.ajax({
+                url: "/getdatacustomer",
+                type: "post",
+                data: {
+                    id: id_customer.split("/")[2],
+                    _token: $("#quickForm input[name=_token]").val()
+                },
+                success: function(data){
+                    $("select[name='customer']").empty();
+                    var newState = new Option(data.data.customer.customer_name, data.data.customer.id, true, false);
+                    $("#customer").append(newState).trigger('change');
+                    $("input[name='customer_label']").val(data.data.customer.customer_name);
+                    cto_loading_hide();
+                },
+                error: function (err) {
+                    // console.log(err);
+                    if (err.status >= 400 && err.status <= 500) {
+                        $.toast({
+                            text: err.status+" "+err.responseJSON.message,
+                            heading: 'Status',
+                            icon: 'warning',
+                            showHideTransition: 'fade',
+                            allowToastClose: true,
+                            hideAfter: 3000,
+                            position: 'mid-center',
+                            textAlign: 'left'
+                        });
+                    }
+                    cto_loading_hide();
+                }
+            });
+      } else {
+            $.qrCodeReader.instance.open.call(this);
+      }
+    });
+
     var dt = new Date();
     var tgl = (dt.getDate()<10?"0"+dt.getDate():dt.getDate())+"/"+((dt.getMonth()+1)<10?"0"+(dt.getMonth()+1):(dt.getMonth()+1))+"/"+dt.getFullYear()+" "+(dt.getHours()<10?"0"+dt.getHours():dt.getHours())+":"+(dt.getMinutes()<10?"0"+dt.getMinutes():dt.getMinutes())
     @if($page_data["page_method_name"] != "View")

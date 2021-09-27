@@ -24,11 +24,17 @@
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-4 col-form-label" for="customer">Pelanggan</label>
-                                <div class="col-sm-6">
+                                <div class="col-sm-5">
                                     <select name="customer" id="customer" class="form-control select2bs4" style="width: 100%;" @if($page_data["page_method_name"] == "View") readonly @endif>
 
                                     </select>
                                     <input type="hidden" name="customer_label" id="customer_label">
+                                </div>
+                                <div class="col-sm-1">
+                                <input id="single2" type="hidden" size="50">
+                                <button type="button" id="openreader-single2" 
+                                data-qrr-target="#single2" 
+                                data-qrr-audio-feedback="true"><i class="fas fa-qrcode"></i></button>
                                 </div>
                             </div>
                         <div class="form-group">

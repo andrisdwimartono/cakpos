@@ -157,7 +157,7 @@ class SellingController extends Controller
         $page_data = $this->tabledesign();
         $page_data["page_method_name"] = "Create";
         $page_data["footer_js_page_specific_script"] = ["selling.page_specific_script.footer_js_create"];
-        $page_data["header_js_page_specific_script"] = ["paging.page_specific_script.header_js_create"];
+        $page_data["header_js_page_specific_script"] = ["selling.page_specific_script.header_js_create"];
         
         return view("selling.create", ["page_data" => $page_data]);
     }
